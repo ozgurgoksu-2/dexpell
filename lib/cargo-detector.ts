@@ -76,7 +76,7 @@ export function detectCargoConversation(message: string): CargoDetectionResult {
   let totalMatches = 0;
   let categoryMatches = 0;
   
-  for (const [category, keywords] of Object.entries(CARGO_KEYWORDS)) {
+  for (const [, keywords] of Object.entries(CARGO_KEYWORDS)) {
     let categoryFound = false;
     for (const keyword of keywords) {
       if (lowerMessage.includes(keyword)) {

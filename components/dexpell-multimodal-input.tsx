@@ -79,6 +79,7 @@ function PureDexpellMultimodalInput({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     submitForm();

@@ -27,6 +27,7 @@ async function callCargoPricing(params: {
 }
 
 // Parse ARAMEX countries CSV
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function parseAramexCountries(): Promise<Set<string>> {
   const countriesFile = path.join(process.cwd(), 'data', 'aramex-countries.csv');
   const content = await fs.readFile(countriesFile, 'utf-8');

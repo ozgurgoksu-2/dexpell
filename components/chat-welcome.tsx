@@ -81,7 +81,7 @@ export function ChatWelcome({ language, onSuggestedAction }: ChatWelcomeProps) {
         className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-2 w-full max-w-4xl"
         variants={staggerChildren}
       >
-        {suggestions.map((suggestion, index) => {
+        {suggestions.map((suggestion) => {
           const Icon = suggestion.icon;
           return (
             <motion.button

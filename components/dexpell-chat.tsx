@@ -4,7 +4,7 @@ import React from 'react';
 import { DexpellMessages } from './dexpell-messages';
 import { DexpellMultimodalInput } from './dexpell-multimodal-input';
 import { DexpellChatHeader } from './dexpell-chat-header';
-import { Item, McpApprovalRequestItem } from '@/lib/assistant';
+import { Item } from '@/lib/assistant';
 
 interface DexpellChatProps {
   items: Item[];
