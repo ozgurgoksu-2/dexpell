@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server';
-import { calculateMixedBoxPricing, BoxDetails } from '@/lib/cargo-pricing-core';
+import { 
+  calculateMixedBoxes, 
+  calculateMixedBoxPricing, 
+  isAramexSupported, 
+  parseAramexPricing, 
+  getAramexPrice,
+  BoxDetails 
+} from '@/lib/cargo-pricing-core';
 
 export async function POST(request: Request) {
   try {
@@ -50,12 +57,147 @@ export async function POST(request: Request) {
       }
     }
 
-    // Call the mixed box pricing function
-    const result = await calculateMixedBoxPricing({
-      content,
-      country,
-      boxes: boxes as BoxDetails[],
-    });
+    // Calculate mixed box analysis
+    const mixedCalculation = calculateMixedBoxes(boxes as BoxDetails[]);
+    const quotes = [];
+
+    // UPS Pricing
+    try {
+      const upsResult = await calculateMixedBoxPricing({
+        content,
+        country,
+        boxes: boxes as BoxDetails[],
+        carrier: 'UPS'
+      });
+      
+      if (upsResult.allowed && upsResult.success && upsResult.data) {
+        quotes.push({
+          carrier: 'UPS',
+          available: true,
+          totalPrice: upsResult.data.totalPrice,
+          serviceType: upsResult.data.serviceType,
+          region: upsResult.data.region,
+          chargeableWeight: upsResult.data.chargeableWeight,
+        });
+      } else {
+        quotes.push({
+          carrier: 'UPS',
+          available: false,
+          totalPrice: 0,
+          serviceType: 'UPS Express',
+          message: upsResult.message || 'Not available'
+        });
+      }
+    } catch (error) {
+      console.error('UPS pricing error:', error);
+      quotes.push({
+        carrier: 'UPS',
+        available: false,
+        totalPrice: 0,
+        serviceType: 'UPS Express',
+        message: 'Calculation error'
+      });
+    }
+
+    // DHL Pricing  
+    try {
+      const dhlResult = await calculateMixedBoxPricing({
+        content,
+        country,
+        boxes: boxes as BoxDetails[],
+        carrier: 'DHL'
+      });
+      
+      if (dhlResult.allowed && dhlResult.success && dhlResult.data) {
+        quotes.push({
+          carrier: 'DHL',
+          available: true,
+          totalPrice: dhlResult.data.totalPrice,
+          serviceType: dhlResult.data.serviceType,
+          region: dhlResult.data.region,
+          chargeableWeight: dhlResult.data.chargeableWeight,
+        });
+      } else {
+        quotes.push({
+          carrier: 'DHL',
+          available: false,
+          totalPrice: 0,
+          serviceType: 'DHL Express',
+          message: dhlResult.message || 'Not available'
+        });
+      }
+    } catch (error) {
+      console.error('DHL pricing error:', error);
+      quotes.push({
+        carrier: 'DHL',
+        available: false,
+        totalPrice: 0,
+        serviceType: 'DHL Express',
+        message: 'Calculation error'
+      });
+    }
+
+    // ARAMEX Pricing
+    try {
+      const { supported, countryKey } = await isAramexSupported(country);
+      
+      if (!supported) {
+        quotes.push({
+          carrier: 'ARAMEX',
+          available: false,
+          totalPrice: 0,
+          serviceType: 'ARAMEX Express',
+          message: 'Country not supported'
+        });
+      } else {
+        const { prices, weights } = await parseAramexPricing();
+        const price = getAramexPrice(mixedCalculation.totalRoundedWeight, countryKey!, prices, weights);
+        
+        if (price) {
+          quotes.push({
+            carrier: 'ARAMEX',
+            available: true,
+            totalPrice: Math.round(price * 100) / 100,
+            serviceType: 'ARAMEX Express',
+            region: countryKey,
+            chargeableWeight: mixedCalculation.totalRoundedWeight,
+          });
+        } else {
+          quotes.push({
+            carrier: 'ARAMEX',
+            available: false,
+            totalPrice: 0,
+            serviceType: 'ARAMEX Express',
+            message: 'Pricing not available'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('ARAMEX pricing error:', error);
+      quotes.push({
+        carrier: 'ARAMEX',
+        available: false,
+        totalPrice: 0,
+        serviceType: 'ARAMEX Express',
+        message: 'Calculation error'
+      });
+    }
+
+    const result = {
+      allowed: true,
+      success: true,
+      multiCarrier: true,
+      scenario: 'mixed_boxes',
+      data: {
+        country,
+        quotes,
+        mixedBoxCalculation: mixedCalculation,
+        boxCalculations: mixedCalculation.boxCalculations,
+        dimensionalAnalysis: mixedCalculation.dimensionalAnalysis,
+        summary: mixedCalculation.summary,
+        content,
+      },
+    };
 
     return NextResponse.json(result);
   } catch (error) {

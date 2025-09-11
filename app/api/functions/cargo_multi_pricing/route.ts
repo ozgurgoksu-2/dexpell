@@ -226,9 +226,9 @@ export async function GET(request: Request) {
           continue;
         }
 
-        // Calculate ARAMEX pricing
+        // Calculate ARAMEX pricing with enhanced dimensional analysis
         try {
-          // Calculate chargeable weight using shared logic
+          // Calculate chargeable weight using enhanced logic
           const weightCalc = calculateChargeableWeight(weight, length, width, height);
 
           if (!weightCalc.chargeableWeight || weightCalc.chargeableWeight === 0) {
@@ -249,6 +249,14 @@ export async function GET(request: Request) {
               totalPrice: Math.round(price * 100) / 100,
               serviceType: 'ARAMEX Express',
               region: countryKey,
+              // Enhanced dimensional data
+              actualWeight: weight,
+              volumetricWeight: Math.round(weightCalc.volumetricWeight * 100) / 100,
+              chargeableWeight: Math.round(totalChargeableWeight * 100) / 100,
+              chargeableWeightPerBox: Math.round(weightCalc.chargeableWeight * 100) / 100,
+              calculationMethod: weightCalc.calculationMethod,
+              isDimensionalWeight: weightCalc.isDimensionalWeight,
+              dimensions: weightCalc.dimensions,
             });
           }
         } catch (error) {
@@ -276,6 +284,16 @@ export async function GET(request: Request) {
               totalPrice: result.data.totalPrice,
               serviceType: result.data.serviceType,
               region: result.data.region,
+              // Enhanced dimensional data
+              actualWeight: result.data.actualWeight,
+              volumetricWeight: result.data.volumetricWeight,
+              chargeableWeight: result.data.chargeableWeight,
+              chargeableWeightPerBox: result.data.chargeableWeightPerBox,
+              calculationMethod: result.data.volumetricWeight && result.data.actualWeight ? 
+                (result.data.volumetricWeight > result.data.actualWeight ? 'volumetric' : 'actual') : 'actual',
+              isDimensionalWeight: result.data.volumetricWeight ? result.data.volumetricWeight > (result.data.actualWeight || 0) : false,
+              dimensions: result.data.length && result.data.width && result.data.height ? 
+                `${result.data.length}×${result.data.width}×${result.data.height}cm` : undefined,
             });
           } else if (result.error && result.message?.includes('not found in the')) {
             quotes.push({

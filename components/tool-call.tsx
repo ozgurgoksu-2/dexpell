@@ -1,15 +1,93 @@
 import React from "react";
 
 import { ToolCallItem } from "@/lib/assistant";
-import { BookOpenText, Clock, Globe, Zap, Code2, Download } from "lucide-react";
+import { BookOpenText, Clock, Globe, Zap, Code2, Download, Truck } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { MultiCarrierQuotesDisplay } from "./multi-carrier-quotes-display";
+import { SingleCarrierQuoteDisplay } from "./single-carrier-quote-display";
 
 interface ToolCallProps {
   toolCall: ToolCallItem;
 }
 
 function ApiCallCell({ toolCall }: ToolCallProps) {
+  // Check if this is a cargo pricing function with results
+  const isCargoFunction = ['cargo_multi_pricing', 'cargo_pricing', 'cargo_draft_pricing', 'cargo_mixed_pricing'].includes(toolCall.name || '') && toolCall.output;
+  
+  if (isCargoFunction) {
+    try {
+      const result = JSON.parse(toolCall.output || '{}');
+      if (result.allowed && result.success) {
+        const data = result.data;
+        
+        // Multi-carrier pricing
+        if (result.multiCarrier && data && data.quotes) {
+          return (
+            <div className="flex flex-col w-full relative mb-4">
+              <div className="flex gap-2 items-center text-blue-500 mb-4 ml-[-8px]">
+                <Truck size={16} />
+                <div className="text-sm font-medium">
+                  {toolCall.status === "completed"
+                    ? "Shipping quotes calculated"
+                    : "Calculating shipping quotes..."}
+                </div>
+              </div>
+              
+              {toolCall.status === "completed" && (
+                <MultiCarrierQuotesDisplay
+                  country={data.country}
+                  quotes={data.quotes}
+                  quantity={data.quantity}
+                  boxCalculations={data.boxCalculations}
+                  dimensionalAnalysis={data.dimensionalAnalysis}
+                  showDetailedAnalysis={data.scenario === 'mixed_boxes'}
+                />
+              )}
+            </div>
+          );
+        }
+        
+        // Single carrier pricing (including draft pricing)
+        if (data && data.carrier && data.totalPrice !== undefined) {
+          return (
+            <div className="flex flex-col w-full relative mb-4">
+              <div className="flex gap-2 items-center text-blue-500 mb-4 ml-[-8px]">
+                <Truck size={16} />
+                <div className="text-sm font-medium">
+                  {toolCall.status === "completed"
+                    ? `${result.isDraft ? 'Draft shipping quote' : 'Shipping quote'} calculated`
+                    : "Calculating shipping quote..."}
+                </div>
+              </div>
+              
+              {toolCall.status === "completed" && (
+                <SingleCarrierQuoteDisplay
+                  country={data.country}
+                  carrier={data.carrier}
+                  pricePerBox={data.pricePerBox}
+                  totalPrice={data.totalPrice}
+                  quantity={data.quantity || 1}
+                  chargeableWeight={data.chargeableWeight || data.totalActualWeight || data.actualWeight || 0}
+                  actualWeight={data.actualWeight}
+                  volumetricWeight={data.volumetricWeight}
+                  length={data.length}
+                  width={data.width}
+                  height={data.height}
+                  content={data.content || 'General cargo'}
+                  region={data.region}
+                  isDraft={result.isDraft || false}
+                />
+              )}
+            </div>
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing cargo pricing output:', error);
+    }
+  }
+
   return (
     <div className="flex flex-col w-[70%] relative mb-[-8px]">
       <div>
