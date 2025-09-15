@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { 
   Package, 
   Scale, 
@@ -22,7 +23,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-blue-50 dark:bg-blue-950',
     textColor: 'text-blue-700 dark:text-blue-300',
     priceColor: 'text-blue-600 dark:text-blue-400',
-    avatar: 'UPS'
+    avatar: 'UPS',
+    logoPath: '/logos/ups-logo.png'
   },
   DHL: {
     name: 'DHL Express',
@@ -32,7 +34,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-yellow-50 dark:bg-yellow-950',
     textColor: 'text-yellow-700 dark:text-yellow-300',
     priceColor: 'text-yellow-600 dark:text-yellow-400',
-    avatar: 'DHL'
+    avatar: 'DHL',
+    logoPath: '/logos/dhl-logo.png'
   },
   ARAMEX: {
     name: 'ARAMEX Express',
@@ -42,7 +45,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-orange-50 dark:bg-orange-950',
     textColor: 'text-orange-700 dark:text-orange-300',
     priceColor: 'text-orange-600 dark:text-orange-400',
-    avatar: 'ARX'
+    avatar: 'ARX',
+    logoPath: '/logos/aramex-logo.png'
   }
 };
 
@@ -194,8 +198,14 @@ export function SingleCarrierQuoteDisplay({
       >
         {/* Carrier Header */}
         <div className="text-center mb-4">
-          <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${config.gradientFrom} ${config.gradientTo} text-white font-bold text-lg mb-2`}>
-            {config.avatar}
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-white border shadow-sm mb-2 p-2">
+            <Image
+              src={config.logoPath}
+              alt={`${carrier} logo`}
+              width={carrier === 'UPS' ? 44 : 40}
+              height={carrier === 'UPS' ? 44 : 40}
+              className="object-contain"
+            />
           </div>
           <h4 className={`font-semibold ${config.textColor}`}>
             {config.name}
@@ -232,10 +242,10 @@ export function SingleCarrierQuoteDisplay({
             <Package className="size-4" />
             <span>{quantity} box{quantity !== 1 ? 'es' : ''}</span>
           </div>
-          {(actualWeight || chargeableWeight) && (
+          {chargeableWeight && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Weight className="size-4" />
-              <span>{actualWeight ? (actualWeight * (quantity || 1)) : chargeableWeight} kg total</span>
+              <span>{chargeableWeight} kg total</span>
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { 
   Package, 
   Scale, 
@@ -28,7 +29,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-blue-50 dark:bg-blue-950',
     textColor: 'text-blue-700 dark:text-blue-300',
     priceColor: 'text-blue-600 dark:text-blue-400',
-    avatar: 'UPS'
+    avatar: 'UPS',
+    logoPath: '/logos/ups-logo.png'
   },
   DHL: {
     name: 'DHL Express',
@@ -38,7 +40,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-yellow-50 dark:bg-yellow-950',
     textColor: 'text-yellow-700 dark:text-yellow-300',
     priceColor: 'text-yellow-600 dark:text-yellow-400',
-    avatar: 'DHL'
+    avatar: 'DHL',
+    logoPath: '/logos/dhl-logo.png'
   },
   ARAMEX: {
     name: 'ARAMEX Express',
@@ -48,7 +51,8 @@ const CARRIER_CONFIG = {
     bgColor: 'bg-orange-50 dark:bg-orange-950',
     textColor: 'text-orange-700 dark:text-orange-300',
     priceColor: 'text-orange-600 dark:text-orange-400',
-    avatar: 'ARX'
+    avatar: 'ARX',
+    logoPath: '/logos/aramex-logo.png'
   }
 };
 
@@ -309,8 +313,14 @@ export function EnhancedPriceCard({
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${config.gradientFrom} ${config.gradientTo} flex items-center justify-center text-white font-bold text-sm`}>
-                        {config.avatar}
+                      <div className="w-10 h-10 rounded-lg bg-white border shadow-sm flex items-center justify-center p-1">
+                        <Image
+                          src={config.logoPath}
+                          alt={`${quote.carrier} logo`}
+                          width={quote.carrier === 'UPS' ? 36 : 32}
+                          height={quote.carrier === 'UPS' ? 36 : 32}
+                          className="object-contain"
+                        />
                       </div>
                       <div>
                         <CardTitle className={`text-lg ${config.textColor}`}>
@@ -348,10 +358,10 @@ export function EnhancedPriceCard({
                       <Package className="w-4 h-4" />
                       <span>{quantity} box{quantity !== 1 ? 'es' : ''}</span>
                     </div>
-                    {(quote.actualWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
+                    {(quote.chargeableWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
                       <div className="flex items-center gap-2 text-sm">
                         <Weight className="w-4 h-4" />
-                        <span>{quote.actualWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal} kg total</span>
+                        <span>{quote.chargeableWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal} kg total</span>
                       </div>
                     )}
                   </div>
@@ -376,8 +386,14 @@ export function EnhancedPriceCard({
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold text-sm">
-                        {config.avatar}
+                      <div className="w-10 h-10 rounded-lg bg-gray-200 border flex items-center justify-center p-1">
+                        <Image
+                          src={config.logoPath}
+                          alt={`${quote.carrier} logo`}
+                          width={quote.carrier === 'UPS' ? 36 : 32}
+                          height={quote.carrier === 'UPS' ? 36 : 32}
+                          className="object-contain opacity-50"
+                        />
                       </div>
                       <div>
                         <CardTitle className="text-lg text-gray-500">
