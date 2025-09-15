@@ -582,6 +582,26 @@ function getPrice(
   return null;
 }
 
+// New Aramex pricing structure based on weight ranges and regions
+const ARAMEX_PRICING_RANGES = {
+  '20-30': [5, 4.5, 4.5, 4.5, 4.5, 4.5, 5, 7, 5], // Regions 1-9
+  '31-100': [3.5, 3.25, 3.5, 3.2, 3, 3, 4.25, 5.25, 4], // Regions 1-9
+  '101-300': [3.5, 3.25, 3.5, 3, 3, 3, 3.5, 5, 4] // Regions 1-9
+};
+
+// Country to region mapping for new Aramex system
+const ARAMEX_COUNTRY_REGIONS: Record<string, number> = {
+  'UAE': 1,
+  'SAUDI ARABIA': 2,
+  'KUWAIT': 3,
+  'QATAR': 4,
+  'BAHRAIN': 5,
+  'OMAN': 6,
+  'JORDAN': 7,
+  'LEBANON': 8,
+  'EGYPT': 9
+};
+
 // Parse ARAMEX pricing data
 export async function parseAramexPricing(): Promise<{
   prices: Map<string, number>;
@@ -655,13 +675,42 @@ export async function isAramexSupported(country: string): Promise<{ supported: b
   };
 }
 
-// Get ARAMEX price for specific weight and country
+// Get ARAMEX price for specific weight and country using new calculation system
 export function getAramexPrice(
   weight: number,
   countryKey: string,
   prices: Map<string, number>,
   weights: number[]
 ): number | null {
+  // Get region for the country
+  const region = ARAMEX_COUNTRY_REGIONS[countryKey];
+  if (!region) {
+    console.warn(`Region not found for country: ${countryKey}`);
+    return null;
+  }
+
+  // Use new calculation system for weights >= 20kg
+  if (weight >= 20) {
+    let pricePerKg: number;
+    
+    if (weight >= 20 && weight <= 30) {
+      pricePerKg = ARAMEX_PRICING_RANGES['20-30'][region - 1]; // region is 1-indexed, array is 0-indexed
+    } else if (weight >= 31 && weight <= 100) {
+      pricePerKg = ARAMEX_PRICING_RANGES['31-100'][region - 1];
+    } else if (weight >= 101 && weight <= 300) {
+      pricePerKg = ARAMEX_PRICING_RANGES['101-300'][region - 1];
+    } else if (weight > 300) {
+      // For weights above 300kg, use the 101-300 range pricing
+      pricePerKg = ARAMEX_PRICING_RANGES['101-300'][region - 1];
+    } else {
+      // This shouldn't happen, but fallback
+      return null;
+    }
+    
+    return weight * pricePerKg;
+  }
+
+  // For weights below 20kg, use the original CSV-based pricing
   // Check for exact match
   const exactPrice = prices.get(`${weight}-${countryKey}`);
   if (exactPrice !== undefined) return exactPrice;
@@ -721,6 +770,24 @@ export async function calculateMixedBoxPricing(params: {
 
   // Calculate mixed boxes
   const mixedBoxCalculation = calculateMixedBoxes(boxes);
+  
+  // Check total weight limit - no pricing for any carrier if over 300kg
+  if (mixedBoxCalculation.totalRoundedWeight > 300) {
+    return {
+      allowed: true,
+      error: true,
+      message: 'Total chargeable weight exceeds 300kg limit. Please contact our air cargo department for shipments over 300kg.',
+    };
+  }
+  
+  // Check DHL volumetric weight limit - no pricing if total volumetric weight > 70kg
+  if (carrier === 'DHL' && mixedBoxCalculation.summary.totalVolumetricWeight > 70) {
+    return {
+      allowed: true,
+      error: true,
+      message: 'DHL volumetric weight exceeds 70kg limit. Please use UPS or ARAMEX for this shipment.',
+    };
+  }
   
   // Parse data files for the carrier and find pricing
   if (carrier !== 'UPS' && carrier !== 'DHL') {
@@ -842,6 +909,24 @@ export async function calculateUPSDHLPricing(params: {
   // Calculate total chargeable weight and round UP the total
   const totalChargeableWeight = calculateTotalChargeableWeight(weightCalc.chargeableWeight, quantity);
 
+  // Check total weight limit - no pricing for any carrier if over 300kg
+  if (totalChargeableWeight > 300) {
+    return {
+      allowed: true,
+      error: true,
+      message: 'Total chargeable weight exceeds 300kg limit. Please contact our air cargo department for shipments over 300kg.',
+    };
+  }
+
+  // Check DHL volumetric weight limit - no pricing if volumetric weight > 70kg
+  if (carrier === 'DHL' && weightCalc.volumetricWeight > 70) {
+    return {
+      allowed: true,
+      error: true,
+      message: 'DHL volumetric weight exceeds 70kg limit. Please use UPS or ARAMEX for this shipment.',
+    };
+  }
+
   // Parse data files for the carrier and find pricing
   if (carrier !== 'UPS' && carrier !== 'DHL') {
     return {
@@ -957,6 +1042,15 @@ export async function calculateEnhancedMultiCarrierPricing(params: {
       // Calculate mixed box analysis
       const mixedCalculation = calculateMixedBoxes(boxes);
 
+      // Check total weight limit - no pricing for any carrier if over 300kg
+      if (mixedCalculation.totalRoundedWeight > 300) {
+        return {
+          allowed: true,
+          error: true,
+          message: 'Total chargeable weight exceeds 300kg limit. Please contact our air cargo department for shipments over 300kg.',
+        };
+      }
+
       // Get quotes for each carrier
       for (const carrier of carriers) {
         if (carrier === 'ARAMEX') {
@@ -993,6 +1087,18 @@ export async function calculateEnhancedMultiCarrierPricing(params: {
         } else {
           // UPS/DHL mixed box pricing
           try {
+            // Skip DHL if volumetric weight is over 70kg
+            if (carrier === 'DHL' && mixedCalculation.summary.totalVolumetricWeight > 70) {
+              quotes.push({
+                carrier: 'DHL',
+                available: false,
+                totalPrice: 0,
+                serviceType: 'DHL Express',
+                message: 'DHL volumetric weight exceeds 70kg limit'
+              });
+              continue;
+            }
+
             const result = await calculateMixedBoxPricing({
               content,
               country,
@@ -1053,6 +1159,15 @@ export async function calculateEnhancedMultiCarrierPricing(params: {
   const weightCalc = calculateChargeableWeight(weight, length, width, height);
   const totalChargeableWeight = calculateTotalChargeableWeight(weightCalc.chargeableWeight, quantity);
 
+  // Check total weight limit - no pricing for any carrier if over 300kg
+  if (totalChargeableWeight > 300) {
+    return {
+      allowed: true,
+      error: true,
+      message: 'Total chargeable weight exceeds 300kg limit. Please contact our air cargo department for shipments over 300kg.',
+    };
+  }
+
   // Get quotes from all carriers
   for (const carrier of carriers) {
     if (carrier === 'ARAMEX') {
@@ -1095,6 +1210,18 @@ export async function calculateEnhancedMultiCarrierPricing(params: {
     } else {
       // UPS/DHL pricing
       try {
+        // Skip DHL if volumetric weight is over 70kg
+        if (carrier === 'DHL' && weightCalc.volumetricWeight > 70) {
+          quotes.push({
+            carrier: 'DHL',
+            available: false,
+            totalPrice: 0,
+            serviceType: 'DHL Express',
+            message: 'DHL volumetric weight exceeds 70kg limit'
+          });
+          continue;
+        }
+
         const result = await calculateUPSDHLPricing({
           content,
           country,
