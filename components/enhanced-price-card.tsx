@@ -99,6 +99,7 @@ interface EnhancedPriceCardProps {
   quantity?: number;
   totalWeight?: number;
   showDetailedAnalysis?: boolean;
+  language?: 'en' | 'tr';
 }
 
 export function EnhancedPriceCard({ 
@@ -108,7 +109,8 @@ export function EnhancedPriceCard({
   dimensionalAnalysis,
   quantity = 1,
   totalWeight,
-  showDetailedAnalysis = false
+  showDetailedAnalysis = false,
+  language = 'en'
 }: EnhancedPriceCardProps) {
   const availableQuotes = quotes.filter(q => q.available);
   const unavailableQuotes = quotes.filter(q => !q.available);
@@ -364,6 +366,17 @@ export function EnhancedPriceCard({
                         <span>{quote.chargeableWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal} kg total</span>
                       </div>
                     )}
+                    
+                    {/* Delivery time */}
+                    <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <CheckCircle className="w-4 h-4" />
+                      <span>
+                        {language === 'tr' 
+                          ? 'Tahmini kargo süresi 1-3 günüdür' 
+                          : 'Delivery time: 1-3 days'
+                        }
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -6,9 +6,24 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { MultiCarrierQuotesDisplay } from "./multi-carrier-quotes-display";
 import { SingleCarrierQuoteDisplay } from "./single-carrier-quote-display";
+import { ShippingProcessMessage } from "./shipping-process-message";
 
 interface ToolCallProps {
   toolCall: ToolCallItem;
+}
+
+// Simple language detection function
+function detectLanguage(content: string): 'en' | 'tr' {
+  const turkishWords = ['kargo', 'gönderi', 'kutu', 'kilogram', 'boyut', 'fiyat', 'türkiye', 'almanya', 'gönderim', 'teslim', 'ücret'];
+  const contentLower = content.toLowerCase();
+  
+  for (const word of turkishWords) {
+    if (contentLower.includes(word)) {
+      return 'tr';
+    }
+  }
+  
+  return 'en';
 }
 
 function ApiCallCell({ toolCall }: ToolCallProps) {
@@ -23,6 +38,9 @@ function ApiCallCell({ toolCall }: ToolCallProps) {
         
         // Multi-carrier pricing
         if (result.multiCarrier && data && data.quotes) {
+          // Detect language from the content or use function input
+          const language = detectLanguage(data.content || toolCall.args?.content || '');
+          
           return (
             <div className="flex flex-col w-full relative mb-4">
               <div className="flex gap-2 items-center text-blue-500 mb-4 ml-[-8px]">
@@ -35,14 +53,18 @@ function ApiCallCell({ toolCall }: ToolCallProps) {
               </div>
               
               {toolCall.status === "completed" && (
-                <MultiCarrierQuotesDisplay
-                  country={data.country}
-                  quotes={data.quotes}
-                  quantity={data.quantity}
-                  boxCalculations={data.boxCalculations}
-                  dimensionalAnalysis={data.dimensionalAnalysis}
-                  showDetailedAnalysis={data.scenario === 'mixed_boxes'}
-                />
+                <>
+                  <MultiCarrierQuotesDisplay
+                    country={data.country}
+                    quotes={data.quotes}
+                    quantity={data.quantity}
+                    boxCalculations={data.boxCalculations}
+                    dimensionalAnalysis={data.dimensionalAnalysis}
+                    showDetailedAnalysis={data.scenario === 'mixed_boxes'}
+                    language={language}
+                  />
+                  <ShippingProcessMessage language={language} />
+                </>
               )}
             </div>
           );
@@ -62,22 +84,25 @@ function ApiCallCell({ toolCall }: ToolCallProps) {
               </div>
               
               {toolCall.status === "completed" && (
-                <SingleCarrierQuoteDisplay
-                  country={data.country}
-                  carrier={data.carrier}
-                  pricePerBox={data.pricePerBox}
-                  totalPrice={data.totalPrice}
-                  quantity={data.quantity || 1}
-                  chargeableWeight={data.chargeableWeight || data.totalActualWeight || data.actualWeight || 0}
-                  actualWeight={data.actualWeight}
-                  volumetricWeight={data.volumetricWeight}
-                  length={data.length}
-                  width={data.width}
-                  height={data.height}
-                  content={data.content || 'General cargo'}
-                  region={data.region}
-                  isDraft={result.isDraft || false}
-                />
+                <>
+                  <SingleCarrierQuoteDisplay
+                    country={data.country}
+                    carrier={data.carrier}
+                    pricePerBox={data.pricePerBox}
+                    totalPrice={data.totalPrice}
+                    quantity={data.quantity || 1}
+                    chargeableWeight={data.chargeableWeight || data.totalActualWeight || data.actualWeight || 0}
+                    actualWeight={data.actualWeight}
+                    volumetricWeight={data.volumetricWeight}
+                    length={data.length}
+                    width={data.width}
+                    height={data.height}
+                    content={data.content || 'General cargo'}
+                    region={data.region}
+                    isDraft={result.isDraft || false}
+                  />
+                  <ShippingProcessMessage language={detectLanguage(data.content || toolCall.args?.content || '')} />
+                </>
               )}
             </div>
           );

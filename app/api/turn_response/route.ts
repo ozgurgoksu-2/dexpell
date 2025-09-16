@@ -26,9 +26,36 @@ export async function POST(request: Request) {
       }
     }
 
+    // Detect language from conversation for cargo mode
+    let detectedLanguage: 'en' | 'tr' | undefined = undefined;
+    if (effectiveMode === 'cargo' && messages.length > 0) {
+      const turkishWords = ['kargo', 'gönderi', 'kutu', 'kilogram', 'boyut', 'fiyat', 'türkiye', 'almanya', 'gönderim', 'teslim', 'ücret', 'genel', 'tahmini', 'günü', 'ağırlığında', 'boyutlarında', 'için', 'şu', 'taşıyıcılardan', 'teklifleri', 'istiyorum'];
+      
+      // Check all user messages for Turkish keywords
+      for (const message of messages) {
+        if (message.role === 'user' && typeof message.content === 'string') {
+          const contentLower = message.content.toLowerCase();
+          for (const word of turkishWords) {
+            if (contentLower.includes(word)) {
+              detectedLanguage = 'tr';
+              break;
+            }
+          }
+          if (detectedLanguage) break;
+        }
+      }
+      
+      if (!detectedLanguage) {
+        detectedLanguage = 'en'; // Default to English if no Turkish detected
+      }
+      
+      console.log("Detected language for cargo conversation:", detectedLanguage);
+      //console.log("Turkish words found in messages:", messages.filter(m => m.role === 'user').map(m => m.content));
+    }
+
     // Use cargo prompt if in cargo mode (manual or auto-detected)
     const instructions = effectiveMode === 'cargo' 
-      ? getCargoDeveloperPrompt() 
+      ? getCargoDeveloperPrompt(detectedLanguage) 
       : getDeveloperPrompt();
 
     console.log("Effective Mode:", effectiveMode);

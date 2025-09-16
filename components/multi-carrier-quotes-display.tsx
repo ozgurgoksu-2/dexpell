@@ -44,6 +44,7 @@ interface MultiCarrierQuotesDisplayProps {
   boxCalculations?: BoxCalculationResult[];
   dimensionalAnalysis?: DimensionalAnalysisResult;
   showDetailedAnalysis?: boolean;
+  language?: 'en' | 'tr';
 }
 
 export function MultiCarrierQuotesDisplay({
@@ -53,6 +54,7 @@ export function MultiCarrierQuotesDisplay({
   boxCalculations,
   dimensionalAnalysis,
   showDetailedAnalysis = false,
+  language = 'en',
 }: MultiCarrierQuotesDisplayProps) {
   
   // Use the enhanced price card component
@@ -66,6 +68,7 @@ export function MultiCarrierQuotesDisplay({
         quantity={quantity}
         totalWeight={undefined}
         showDetailedAnalysis={showDetailedAnalysis}
+        language={language}
       />
     </div>
   );

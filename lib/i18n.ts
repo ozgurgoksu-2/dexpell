@@ -349,7 +349,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
       agents: {
         nova: {
           name: 'Nova',
-          title: 'Son Kilometre Çözümleri Müdürü',
+          title: 'Kurye Taşımacılığı Çözümleri Müdürü',
           description: 'Çevik, hassas ve sokak zekası olan. Nova, e-ticaret ve kurye teslimat planlamasını hiçbir insanın yapamayacağı şekilde yönetiyor.',
           features: [
             'Son kilometre maliyet optimizasyonu',
@@ -361,7 +361,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
         },
         arwen: {
           name: 'Arwen',
-          title: 'Deniz Taşımacılığı Fiyatlandırma Uzmanı',
+          title: 'Denizyolu Taşımacılığı Fiyatlandırma Sorumlusu',
           description: 'Küresel ticaret rotalarını avucunun içi gibi biliyor. Arwen, saniyeler içinde stratejik, veri destekli deniz taşımacılığı teklifleri sunuyor.',
           features: [
             'FCL / LCL teklifleri',
@@ -373,7 +373,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
         },
         elif: {
           name: 'Elif',
-          title: 'Hava Taşımacılığı Fiyatlandırma Uzmanı',
+          title: 'Havayolu Taşımacılığı Fiyatlandırma Sorumlusu',
           description: 'Sadece kargo taşımıyor - zaman teslim ediyor. Elif, en hızlı hava taşımacılığı seçeneklerini tam bir hassasiyetle hesaplıyor.',
           features: [
             'Kg/hacim bazlı fiyatlandırma',
@@ -385,7 +385,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
         },
         lucas: {
           name: 'Lucas',
-          title: 'Karayolu Taşımacılığı Fiyatlandırma Uzmanı',
+          title: 'Karayolu Taşımacılığı Fiyatlandırma Sorumlusu',
           description: 'Kilometre ve marj olarak düşünüyor. Lucas, doğru kamyon tekliflerini, optimize edilmiş rotaları ve teslimat sürelerini anında sunuyor.',
           features: [
             'Rota ve ağırlık bazlı nakliye tahmini',
@@ -397,7 +397,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
         },
         sofia: {
           name: 'Sofia',
-          title: 'Küresel Gümrük Danışmanı',
+          title: 'Uluslararası Gümrük Danışmanı',
           description: 'Mallarınız sınırda olduğunda, artık çok geç. Sofia vergileri tahmin ediyor, HS kodlarını belirliyor ve düzenleyici sorunları işaretliyor - siz daha göndermeden önce.',
           features: [
             'Ürün detaylarından HS/HTS kod tahmini',

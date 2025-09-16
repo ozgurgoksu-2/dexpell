@@ -156,6 +156,7 @@ export default function TestMixedPricingPage() {
             quantity={result.data.boxCalculations?.length || 3}
             totalWeight={result.data.summary?.totalActualWeight}
             showDetailedAnalysis={true}
+            language="en"
           />
 
           {/* Raw Data Debug (can be hidden in production) */}

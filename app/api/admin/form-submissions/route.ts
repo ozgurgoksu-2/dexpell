@@ -69,6 +69,82 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Create new form submission
+export async function POST(request: NextRequest) {
+  try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Supabase not configured' },
+        { status: 500 }
+      );
+    }
+
+    const body = await request.json();
+
+    // Validate required fields
+    const requiredFields = [
+      'sender_name', 'sender_tc', 'sender_address', 'sender_contact',
+      'receiver_name', 'receiver_address', 'city_postal', 'destination',
+      'receiver_contact', 'receiver_email', 'content_description', 'content_value'
+    ];
+
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json(
+          { error: `Missing required field: ${field}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Insert form submission
+    const { data, error } = await supabaseAdmin
+      .from('form_submissions')
+      .insert({
+        sender_name: body.sender_name,
+        sender_tc: body.sender_tc,
+        sender_address: body.sender_address,
+        sender_contact: body.sender_contact,
+        receiver_name: body.receiver_name,
+        receiver_address: body.receiver_address,
+        city_postal: body.city_postal,
+        destination: body.destination,
+        receiver_contact: body.receiver_contact,
+        receiver_email: body.receiver_email,
+        content_description: body.content_description,
+        content_value: body.content_value,
+        user_type: body.user_type || 'guest',
+        user_email: body.user_email || null,
+        user_id: body.user_id || null,
+        status: body.status || 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating form submission:', error);
+      return NextResponse.json(
+        { error: 'Failed to create form submission' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      submission: data,
+      message: 'Form submission created successfully'
+    });
+  } catch (error) {
+    console.error('Error in create form submission API:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 // Update form submission status
 export async function PATCH(request: NextRequest) {
   try {

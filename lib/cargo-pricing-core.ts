@@ -707,23 +707,27 @@ export function getAramexPrice(
       return null;
     }
     
-    return weight * pricePerKg;
+    // Apply 15% markup to final price (hidden from customer)
+    const basePrice = weight * pricePerKg;
+    return basePrice * 1.15;
   }
 
   // For weights below 20kg, use the original CSV-based pricing
   // Check for exact match
   const exactPrice = prices.get(`${weight}-${countryKey}`);
-  if (exactPrice !== undefined) return exactPrice;
+  if (exactPrice !== undefined) return exactPrice * 1.15; // Apply 15% markup
 
   // Find closest weights
   const { lower, upper } = findClosestWeight(weight, weights);
 
   if (!lower && upper) {
-    return prices.get(`${upper}-${countryKey}`) || null;
+    const price = prices.get(`${upper}-${countryKey}`);
+    return price ? price * 1.15 : null; // Apply 15% markup
   }
 
   if (lower && !upper) {
-    return prices.get(`${lower}-${countryKey}`) || null;
+    const price = prices.get(`${lower}-${countryKey}`);
+    return price ? price * 1.15 : null; // Apply 15% markup
   }
 
   if (lower && upper) {
@@ -732,7 +736,8 @@ export function getAramexPrice(
 
     if (lowerPrice !== undefined && upperPrice !== undefined) {
       const ratio = (weight - lower) / (upper - lower);
-      return lowerPrice + (upperPrice - lowerPrice) * ratio;
+      const interpolatedPrice = lowerPrice + (upperPrice - lowerPrice) * ratio;
+      return interpolatedPrice * 1.15; // Apply 15% markup
     }
   }
 
@@ -849,7 +854,9 @@ export async function calculateMixedBoxPricing(params: {
     };
   }
 
-  const totalPrice = Math.round(price * 100) / 100;
+  // Apply 15% markup to final price (hidden from customer)
+  const basePrice = Math.round(price * 100) / 100;
+  const totalPrice = Math.round(basePrice * 1.15 * 100) / 100;
 
   return {
     allowed: true,
@@ -987,7 +994,9 @@ export async function calculateUPSDHLPricing(params: {
     };
   }
 
-  const totalPrice = Math.round(price * 100) / 100;
+  // Apply 15% markup to final price (hidden from customer)
+  const basePrice = Math.round(price * 100) / 100;
+  const totalPrice = Math.round(basePrice * 1.15 * 100) / 100;
 
   return {
     allowed: true,

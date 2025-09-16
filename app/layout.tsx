@@ -16,10 +16,12 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "OpenAI Chat Platform",
-  description: "Advanced AI chat platform powered by OpenAI",
+  title: "Dexpell AI",
+  description: "Advanced AI chat platform powered by Dexpell",
   icons: {
-    icon: "/openai_logo.svg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/images/dexpell-logo.jpg",
   },
 };
 
