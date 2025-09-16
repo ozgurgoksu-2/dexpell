@@ -107,11 +107,14 @@ export function EnhancedPriceCard({
   quotes, 
   boxCalculations, 
   dimensionalAnalysis,
-  quantity = 1,
+  quantity,
   totalWeight,
   showDetailedAnalysis = false,
   language = 'en'
 }: EnhancedPriceCardProps) {
+  // Calculate quantity automatically from dimensional analysis if not provided
+  const finalQuantity = quantity ?? dimensionalAnalysis?.totalBoxes ?? 1;
+  
   const availableQuotes = quotes.filter(q => q.available);
   const unavailableQuotes = quotes.filter(q => !q.available);
 
@@ -147,10 +150,10 @@ export function EnhancedPriceCard({
           <span>Shipping to {country}</span>
         </div>
         <div className="flex items-center justify-center gap-4 text-sm">
-          {quantity > 1 && (
+          {finalQuantity > 1 && (
             <div className="flex items-center gap-1">
               <Package className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600 dark:text-gray-400">{quantity} packages</span>
+              <span className="text-gray-600 dark:text-gray-400">{finalQuantity} packages</span>
             </div>
           )}
           {(totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
@@ -358,7 +361,7 @@ export function EnhancedPriceCard({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Package className="w-4 h-4" />
-                      <span>{quantity} box{quantity !== 1 ? 'es' : ''}</span>
+                      <span>{finalQuantity} box{finalQuantity !== 1 ? 'es' : ''}</span>
                     </div>
                     {(quote.chargeableWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
                       <div className="flex items-center gap-2 text-sm">

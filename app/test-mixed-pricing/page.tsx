@@ -153,7 +153,7 @@ export default function TestMixedPricingPage() {
             quotes={result.data.quotes}
             boxCalculations={result.data.boxCalculations}
             dimensionalAnalysis={result.data.dimensionalAnalysis}
-            quantity={result.data.boxCalculations?.length || 3}
+            quantity={result.data.summary?.totalBoxes || result.data.dimensionalAnalysis?.totalBoxes || 3}
             totalWeight={result.data.summary?.totalActualWeight}
             showDetailedAnalysis={true}
             language="en"
