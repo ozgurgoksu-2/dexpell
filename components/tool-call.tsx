@@ -47,8 +47,8 @@ function ApiCallCell({ toolCall }: ToolCallProps) {
                 <Truck size={16} />
                 <div className="text-sm font-medium">
                   {toolCall.status === "completed"
-                    ? "Shipping quotes calculated"
-                    : "Calculating shipping quotes..."}
+                    ? (language === 'tr' ? "Kargo teklifleri hesaplandı" : "Shipping quotes calculated")
+                    : (language === 'tr' ? "Kargo teklifleri hesaplanıyor..." : "Calculating shipping quotes...")}
                 </div>
               </div>
               
@@ -78,8 +78,12 @@ function ApiCallCell({ toolCall }: ToolCallProps) {
                 <Truck size={16} />
                 <div className="text-sm font-medium">
                   {toolCall.status === "completed"
-                    ? `${result.isDraft ? 'Draft shipping quote' : 'Shipping quote'} calculated`
-                    : "Calculating shipping quote..."}
+                    ? (detectLanguage(data.content || toolCall.args?.content || '') === 'tr' 
+                        ? `${result.isDraft ? 'Taslak kargo teklifi' : 'Kargo teklifi'} hesaplandı`
+                        : `${result.isDraft ? 'Draft shipping quote' : 'Shipping quote'} calculated`)
+                    : (detectLanguage(data.content || toolCall.args?.content || '') === 'tr' 
+                        ? "Kargo teklifi hesaplanıyor..." 
+                        : "Calculating shipping quote...")}
                 </div>
               </div>
               

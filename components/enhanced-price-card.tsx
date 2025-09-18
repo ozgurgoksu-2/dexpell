@@ -141,25 +141,51 @@ export function EnhancedPriceCard({
     }
   };
 
+  const getText = (key: string) => {
+    const texts = {
+      shippingTo: language === 'tr' ? `${country}'ya Gönderim` : `Shipping to ${country}`,
+      packages: language === 'tr' ? 'paket' : 'packages',
+      package: language === 'tr' ? 'paket' : 'package',
+      totalWeight: language === 'tr' ? 'Toplam Ağırlık:' : 'Total Weight:',
+      dimensionalAnalysis: language === 'tr' ? 'Boyutsal Analiz' : 'Dimensional Analysis',
+      scenario: language === 'tr' ? 'Senaryo' : 'Scenario',
+      identicalScenario: language === 'tr' ? 'Aynı Boyutlar' : 'Identical',
+      mixedWeightsScenario: language === 'tr' ? 'Farklı Ağırlıklar' : 'Mixed Weights',
+      mixedDimensionsScenario: language === 'tr' ? 'Farklı Boyutlar' : 'Mixed Dimensions',
+      completelyMixedScenario: language === 'tr' ? 'Tamamen Karışık' : 'Completely Mixed',
+      bestPrice: language === 'tr' ? 'En İyi Fiyat' : 'Best Price',
+      totalPrice: language === 'tr' ? 'Toplam Fiyat' : 'Total Price',
+      box: language === 'tr' ? 'kutu' : 'box',
+      boxes: language === 'tr' ? 'kutu' : 'boxes',
+      to: language === 'tr' ? `${country}'ya` : `To ${country}`,
+      deliveryTime: language === 'tr' ? 'Teslimat süresi:' : 'Delivery time:',
+      days: language === 'tr' ? 'gün' : 'days',
+      notAvailable: language === 'tr' ? 'Mevcut Değil' : 'Not Available',
+      notAvailableFor: language === 'tr' ? `${country} için mevcut değil` : `Not available for ${country}`,
+      finalPricing: language === 'tr' ? 'Fiyatlar tüm geçerli ücretleri içerir. Nihai fiyatlandırma depoda ölçüm sonrası teyit edilir.' : 'Prices include all applicable charges. Final pricing confirmed after measurement at warehouse.'
+    };
+    return texts[key as keyof typeof texts] || key;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with destination and summary */}
       <div className="text-center space-y-3">
         <div className="flex items-center justify-center gap-2 text-lg font-semibold">
           <Globe className="w-5 h-5 text-blue-600" />
-          <span>Shipping to {country}</span>
+          <span>{getText('shippingTo')}</span>
         </div>
         <div className="flex items-center justify-center gap-4 text-sm">
           {finalQuantity > 1 && (
             <div className="flex items-center gap-1">
               <Package className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600 dark:text-gray-400">{finalQuantity} packages</span>
+              <span className="text-gray-600 dark:text-gray-400">{finalQuantity} {getText('packages')}</span>
             </div>
           )}
           {(totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
             <div className="flex items-center gap-1">
               <Scale className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600 dark:text-gray-400">Total Weight:</span>
+              <span className="text-gray-600 dark:text-gray-400">{getText('totalWeight')}</span>
               <span className="font-semibold text-primary">
                 {(totalWeight || dimensionalAnalysis?.chargeableWeightTotal)?.toFixed(1)}kg
               </span>
@@ -174,7 +200,7 @@ export function EnhancedPriceCard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Calculator className="w-5 h-5" />
-              Dimensional Analysis
+              {getText('dimensionalAnalysis')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -182,8 +208,12 @@ export function EnhancedPriceCard({
             <div className="flex items-center gap-3">
               <div className={`flex items-center gap-2 ${getScenarioColor(dimensionalAnalysis.scenario)}`}>
                 {getScenarioIcon(dimensionalAnalysis.scenario)}
-                <span className="font-medium capitalize">
-                  {dimensionalAnalysis.scenario.replace('_', ' ')} Scenario
+                <span className="font-medium">
+                  {dimensionalAnalysis.scenario === 'identical' ? getText('identicalScenario') :
+                   dimensionalAnalysis.scenario === 'mixed_weights' ? getText('mixedWeightsScenario') :
+                   dimensionalAnalysis.scenario === 'mixed_dimensions' ? getText('mixedDimensionsScenario') :
+                   dimensionalAnalysis.scenario === 'completely_mixed' ? getText('completelyMixedScenario') :
+                   dimensionalAnalysis.scenario} {getText('scenario')}
                 </span>
               </div>
             </div>
@@ -311,7 +341,7 @@ export function EnhancedPriceCard({
               <Card className={`${config.borderColor} ${config.bgColor} relative overflow-hidden`}>
                 {isLowest && (
                   <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-2 py-1 rounded-bl-lg">
-                    Best Price
+                    {getText('bestPrice')}
                   </div>
                 )}
                 
@@ -346,7 +376,7 @@ export function EnhancedPriceCard({
                     <div className={`text-3xl font-bold ${config.priceColor}`}>
                       ${quote.totalPrice.toFixed(2)}
                     </div>
-                    <div className="text-sm text-gray-500">Total Price</div>
+                    <div className="text-sm text-gray-500">{getText('totalPrice')}</div>
                   </div>
 
                   {/* Service details */}
@@ -357,11 +387,11 @@ export function EnhancedPriceCard({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Globe className="w-4 h-4" />
-                      <span>To {country}</span>
+                      <span>{getText('to')}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Package className="w-4 h-4" />
-                      <span>{finalQuantity} box{finalQuantity !== 1 ? 'es' : ''}</span>
+                      <span>{finalQuantity} {finalQuantity !== 1 ? getText('boxes') : getText('box')}</span>
                     </div>
                     {(quote.chargeableWeight || totalWeight || dimensionalAnalysis?.chargeableWeightTotal) && (
                       <div className="flex items-center gap-2 text-sm">
@@ -415,7 +445,7 @@ export function EnhancedPriceCard({
                         <CardTitle className="text-lg text-gray-500">
                           {config.name}
                         </CardTitle>
-                        <div className="text-xs text-gray-400">Not Available</div>
+                        <div className="text-xs text-gray-400">{getText('notAvailable')}</div>
                       </div>
                     </div>
                     <AlertTriangle className="w-5 h-5 text-gray-400" />
@@ -424,8 +454,7 @@ export function EnhancedPriceCard({
 
                 <CardContent>
                   <div className="text-center text-gray-500">
-                    <div className="text-sm">Not available for</div>
-                    <div className="font-medium">{country}</div>
+                    <div className="text-sm">{getText('notAvailableFor')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -437,7 +466,7 @@ export function EnhancedPriceCard({
       {/* Summary note */}
       {sortedQuotes.length > 0 && (
         <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Prices include all applicable charges. Final pricing confirmed after measurement at warehouse.
+          {getText('finalPricing')}
         </div>
       )}
     </div>
