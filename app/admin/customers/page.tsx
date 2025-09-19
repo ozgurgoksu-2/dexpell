@@ -102,6 +102,11 @@ export default function CustomersPage() {
             customer.total_spent += parseFloat(submission.content_value) || 0;
             customer.last_activity = submission.created_at > customer.last_activity ? 
               submission.created_at : customer.last_activity;
+            
+            // Count bookings (accepted requests)
+            if (submission.status === 'accepted') {
+              customer.total_bookings++;
+            }
           } else {
             // Create new customer
             customerMap.set(tc, {
@@ -117,7 +122,7 @@ export default function CustomersPage() {
               registration_date: submission.created_at,
               last_activity: submission.created_at,
               total_requests: 1,
-              total_bookings: 0, // Will be calculated separately
+              total_bookings: submission.status === 'accepted' ? 1 : 0, // Count accepted as bookings
               total_spent: parseFloat(submission.content_value) || 0,
               tags: [],
               status: 'active'
@@ -145,40 +150,42 @@ export default function CustomersPage() {
       const requestsData = await requestsResponse.json();
       
       if (requestsResponse.ok) {
-        // Filter requests by customer TC
-        const customerRequests = (requestsData.submissions || [])
-          .filter((submission: any) => submission.sender_tc === customerTc)
+        const allSubmissions = requestsData.submissions || [];
+        
+        // Filter all submissions by customer TC
+        const customerSubmissions = allSubmissions.filter((submission: any) => submission.sender_tc === customerTc);
+        
+        // Separate requests (all submissions) and bookings (accepted submissions)
+        const customerRequests = customerSubmissions.map((submission: any) => ({
+          id: submission.id,
+          sender_name: submission.sender_name,
+          receiver_name: submission.receiver_name,
+          destination: submission.destination,
+          content_value: submission.content_value,
+          content_description: submission.content_description,
+          status: submission.status,
+          created_at: submission.created_at,
+          updated_at: submission.updated_at
+        }));
+        
+        // Create bookings from accepted submissions
+        const customerBookings = customerSubmissions
+          .filter((submission: any) => submission.status === 'accepted')
           .map((submission: any) => ({
             id: submission.id,
-            sender_name: submission.sender_name,
-            receiver_name: submission.receiver_name,
-            destination: submission.destination,
-            content_value: submission.content_value,
-            content_description: submission.content_description,
-            status: submission.status,
-            created_at: submission.created_at,
-            updated_at: submission.updated_at
+            booking_number: `BK-${submission.id.slice(0, 8).toUpperCase()}`,
+            date: submission.created_at,
+            route: `Turkey → ${submission.destination}`,
+            carrier: 'Auto-assigned', // This would come from carrier selection logic
+            chargeable_weight: Math.round((parseFloat(submission.content_value) / 20) * 10) / 10, // Estimated weight based on value
+            price: parseFloat(submission.content_value),
+            status: 'confirmed' as const, // Since it's accepted, it's confirmed
+            tracking_number: `TRK-${submission.id.slice(0, 8).toUpperCase()}`
           }));
         
         setCustomerRequests(customerRequests);
+        setCustomerBookings(customerBookings);
       }
-      
-      // Mock bookings for now - will be replaced with real booking API later
-      const mockBookings: CustomerBooking[] = [
-        {
-          id: '1',
-          booking_number: 'BK001',
-          date: new Date().toISOString(),
-          route: 'Turkey → Germany',
-          carrier: 'DHL',
-          chargeable_weight: 2.5,
-          price: 45.80,
-          status: 'delivered',
-          tracking_number: 'DHL123456789'
-        }
-      ];
-      
-      setCustomerBookings(mockBookings);
     } catch (error) {
       console.error('Error loading customer details:', error);
     }

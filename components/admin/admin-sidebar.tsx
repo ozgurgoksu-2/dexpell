@@ -16,7 +16,8 @@ import {
   MessageSquare,
   Package,
   Bot,
-  BarChart3
+  BarChart3,
+  Truck
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -43,6 +44,12 @@ const menuItems = [
     href: '/admin/customers',
     icon: Users,
     description: 'Customer profiles & history'
+  },
+  {
+    title: 'Bookings',
+    href: '/admin/bookings',
+    icon: Truck,
+    description: 'Confirmed shipments & tracking'
   },
   {
     title: 'Catalog',
