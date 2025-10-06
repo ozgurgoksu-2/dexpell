@@ -19,6 +19,29 @@ function identifyCargoCategory(content: string) {
   return { category: 'UNKNOWN' };
 }
 
+// Enhanced function to detect and resolve city names to countries
+export function resolveCityToCountry(input: string): string {
+  const normalizedInput = input.toLowerCase().trim();
+  
+  // First check if it's a known city
+  const cityCountry = cityToCountryMapping[normalizedInput];
+  if (cityCountry) {
+    console.log(`City detected: "${input}" → "${cityCountry}"`);
+    return cityCountry;
+  }
+  
+  // Check for partial city matches (for cases like "Atina, Greece" where user provides both)
+  for (const [city, country] of Object.entries(cityToCountryMapping)) {
+    if (normalizedInput.includes(city) && city.length > 3) { // Avoid short matches
+      console.log(`Partial city match detected: "${input}" contains "${city}" → "${country}"`);
+      return country;
+    }
+  }
+  
+  // If not a city, treat as country and normalize
+  return normalizeCountryName(input);
+}
+
 // Extract and normalize country name, handling "City, Country" format
 export function normalizeCountryName(country: string): string {
   let normalizedCountry = country.toLowerCase().trim();
@@ -143,6 +166,421 @@ const countryTranslations: Record<string, string> = {
   'uruguay': 'uruguay',
   'paraguay': 'paraguay',
   'bolivia': 'bolivya'
+};
+
+// Comprehensive city-to-country mapping for better detection
+const cityToCountryMapping: Record<string, string> = {
+  // Major European cities
+  'berlin': 'germany',
+  'munich': 'germany',
+  'hamburg': 'germany',
+  'cologne': 'germany',
+  'frankfurt': 'germany',
+  'stuttgart': 'germany',
+  'dusseldorf': 'germany',
+  'dortmund': 'germany',
+  'essen': 'germany',
+  'leipzig': 'germany',
+  'bremen': 'germany',
+  'dresden': 'germany',
+  'hannover': 'germany',
+  'nuremberg': 'germany',
+  
+  'paris': 'france',
+  'marseille': 'france',
+  'lyon': 'france',
+  'toulouse': 'france',
+  'nice': 'france',
+  'nantes': 'france',
+  'strasbourg': 'france',
+  'montpellier': 'france',
+  'bordeaux': 'france',
+  'lille': 'france',
+  'rennes': 'france',
+  'reims': 'france',
+  'le havre': 'france',
+  'saint-etienne': 'france',
+  'toulon': 'france',
+  'grenoble': 'france',
+  'dijon': 'france',
+  'angers': 'france',
+  'villeurbanne': 'france',
+  'nimes': 'france',
+  
+  'london': 'united kingdom',
+  'birmingham': 'united kingdom',
+  'manchester': 'united kingdom',
+  'glasgow': 'united kingdom',
+  'liverpool': 'united kingdom',
+  'leeds': 'united kingdom',
+  'sheffield': 'united kingdom',
+  'edinburgh': 'united kingdom',
+  'bristol': 'united kingdom',
+  'cardiff': 'united kingdom',
+  'leicester': 'united kingdom',
+  'coventry': 'united kingdom',
+  'bradford': 'united kingdom',
+  'belfast': 'united kingdom',
+  'nottingham': 'united kingdom',
+  'kingston upon hull': 'united kingdom',
+  'plymouth': 'united kingdom',
+  'stoke-on-trent': 'united kingdom',
+  'wolverhampton': 'united kingdom',
+  'derby': 'united kingdom',
+  
+  'rome': 'italy',
+  'milan': 'italy',
+  'naples': 'italy',
+  'turin': 'italy',
+  'palermo': 'italy',
+  'genoa': 'italy',
+  'bologna': 'italy',
+  'florence': 'italy',
+  'bari': 'italy',
+  'catania': 'italy',
+  'venice': 'italy',
+  'verona': 'italy',
+  'messina': 'italy',
+  'padua': 'italy',
+  'trieste': 'italy',
+  'brescia': 'italy',
+  'taranto': 'italy',
+  'prato': 'italy',
+  'reggio calabria': 'italy',
+  'modena': 'italy',
+  
+  'madrid': 'spain',
+  'barcelona': 'spain',
+  'valencia': 'spain',
+  'seville': 'spain',
+  'zaragoza': 'spain',
+  'malaga': 'spain',
+  'murcia': 'spain',
+  'palma': 'spain',
+  'las palmas': 'spain',
+  'bilbao': 'spain',
+  'alicante': 'spain',
+  'cordoba': 'spain',
+  'valladolid': 'spain',
+  'vigo': 'spain',
+  'gijon': 'spain',
+  'hospitalet de llobregat': 'spain',
+  'vitoria-gasteiz': 'spain',
+  'la coruna': 'spain',
+  'granada': 'spain',
+  'elche': 'spain',
+  
+  'amsterdam': 'netherlands',
+  'rotterdam': 'netherlands',
+  'the hague': 'netherlands',
+  'utrecht': 'netherlands',
+  'eindhoven': 'netherlands',
+  'tilburg': 'netherlands',
+  'groningen': 'netherlands',
+  'almere': 'netherlands',
+  'breda': 'netherlands',
+  'nijmegen': 'netherlands',
+  'enschede': 'netherlands',
+  'haarlem': 'netherlands',
+  'arnhem': 'netherlands',
+  'zaanstad': 'netherlands',
+  'haarlemmermeer': 'netherlands',
+  
+  'brussels': 'belgium',
+  'antwerp': 'belgium',
+  'ghent': 'belgium',
+  'charleroi': 'belgium',
+  'liege': 'belgium',
+  'bruges': 'belgium',
+  'namur': 'belgium',
+  'leuven': 'belgium',
+  'mons': 'belgium',
+  'aalst': 'belgium',
+  
+  'vienna': 'austria',
+  'graz': 'austria',
+  'linz': 'austria',
+  'salzburg': 'austria',
+  'innsbruck': 'austria',
+  'klagenfurt': 'austria',
+  'villach': 'austria',
+  'wels': 'austria',
+  'sankt polten': 'austria',
+  'dornbirn': 'austria',
+  
+  'zurich': 'switzerland',
+  'geneva': 'switzerland',
+  'basel': 'switzerland',
+  'bern': 'switzerland',
+  'lausanne': 'switzerland',
+  'winterthur': 'switzerland',
+  'lucerne': 'switzerland',
+  'st. gallen': 'switzerland',
+  'lugano': 'switzerland',
+  'biel': 'switzerland',
+  
+  // Greek cities
+  'athens': 'greece',
+  'thessaloniki': 'greece',
+  'patras': 'greece',
+  'piraeus': 'greece',
+  'larissa': 'greece',
+  'heraklion': 'greece',
+  'peristeri': 'greece',
+  'kallithea': 'greece',
+  'acharnes': 'greece',
+  'kalamaria': 'greece',
+  'atina': 'greece', // Turkish name for Athens
+  'athen': 'greece', // German name for Athens
+  'selanik': 'greece', // Turkish name for Thessaloniki
+  
+  // US cities
+  'new york': 'united states',
+  'los angeles': 'united states',
+  'chicago': 'united states',
+  'houston': 'united states',
+  'phoenix': 'united states',
+  'philadelphia': 'united states',
+  'san antonio': 'united states',
+  'san diego': 'united states',
+  'dallas': 'united states',
+  'san jose': 'united states',
+  'austin': 'united states',
+  'jacksonville': 'united states',
+  'fort worth': 'united states',
+  'columbus': 'united states',
+  'charlotte': 'united states',
+  'san francisco': 'united states',
+  'indianapolis': 'united states',
+  'seattle': 'united states',
+  'denver': 'united states',
+  'washington': 'united states',
+  'boston': 'united states',
+  'el paso': 'united states',
+  'detroit': 'united states',
+  'nashville': 'united states',
+  'portland': 'united states',
+  'memphis': 'united states',
+  'oklahoma city': 'united states',
+  'las vegas': 'united states',
+  'louisville': 'united states',
+  'baltimore': 'united states',
+  'milwaukee': 'united states',
+  'albuquerque': 'united states',
+  'tucson': 'united states',
+  'fresno': 'united states',
+  'mesa': 'united states',
+  'sacramento': 'united states',
+  'atlanta': 'united states',
+  'kansas city': 'united states',
+  'colorado springs': 'united states',
+  'miami': 'united states',
+  'raleigh': 'united states',
+  'omaha': 'united states',
+  'long beach': 'united states',
+  'virginia beach': 'united states',
+  'oakland': 'united states',
+  'minneapolis': 'united states',
+  'tulsa': 'united states',
+  'tampa': 'united states',
+  'arlington': 'united states',
+  'new orleans': 'united states',
+  
+  // Canadian cities
+  'toronto': 'canada',
+  'montreal': 'canada',
+  'vancouver': 'canada',
+  'calgary': 'canada',
+  'edmonton': 'canada',
+  'ottawa': 'canada',
+  'winnipeg': 'canada',
+  'quebec city': 'canada',
+  'hamilton': 'canada',
+  'kitchener': 'canada',
+  'london': 'canada',
+  'victoria': 'canada',
+  'halifax': 'canada',
+  'oshawa': 'canada',
+  'windsor': 'canada',
+  'saskatoon': 'canada',
+  'st. catharines': 'canada',
+  'regina': 'canada',
+  'sherbrooke': 'canada',
+  'kelowna': 'canada',
+  
+  // Middle East cities
+  'dubai': 'united arab emirates',
+  'abu dhabi': 'united arab emirates',
+  'sharjah': 'united arab emirates',
+  'ajman': 'united arab emirates',
+  'ras al-khaimah': 'united arab emirates',
+  'fujairah': 'united arab emirates',
+  'umm al-quwain': 'united arab emirates',
+  
+  'riyadh': 'saudi arabia',
+  'jeddah': 'saudi arabia',
+  'mecca': 'saudi arabia',
+  'medina': 'saudi arabia',
+  'dammam': 'saudi arabia',
+  'khobar': 'saudi arabia',
+  'tabuk': 'saudi arabia',
+  'buraidah': 'saudi arabia',
+  'khamis mushait': 'saudi arabia',
+  'hail': 'saudi arabia',
+  
+  'beirut': 'lebanon',
+  'tripoli': 'lebanon',
+  'sidon': 'lebanon',
+  'tyre': 'lebanon',
+  'nabatieh': 'lebanon',
+  'baalbek': 'lebanon',
+  'jounieh': 'lebanon',
+  'zahle': 'lebanon',
+  
+  'amman': 'jordan',
+  'zarqa': 'jordan',
+  'irbid': 'jordan',
+  'russeifa': 'jordan',
+  'wadi as-sir': 'jordan',
+  'aqaba': 'jordan',
+  'madaba': 'jordan',
+  'salt': 'jordan',
+  
+  'kuwait city': 'kuwait',
+  'hawalli': 'kuwait',
+  'as salimiyah': 'kuwait',
+  'sabah as salim': 'kuwait',
+  
+  'doha': 'qatar',
+  'al rayyan': 'qatar',
+  'umm salal': 'qatar',
+  'al wakrah': 'qatar',
+  
+  'manama': 'bahrain',
+  'riffa': 'bahrain',
+  'muharraq': 'bahrain',
+  'hamad town': 'bahrain',
+  
+  'muscat': 'oman',
+  'seeb': 'oman',
+  'salalah': 'oman',
+  'bawshar': 'oman',
+  'sohar': 'oman',
+  
+  'cairo': 'egypt',
+  'alexandria': 'egypt',
+  'giza': 'egypt',
+  'shubra el-kheima': 'egypt',
+  'port said': 'egypt',
+  'suez': 'egypt',
+  'luxor': 'egypt',
+  'mansoura': 'egypt',
+  'el-mahalla el-kubra': 'egypt',
+  'tanta': 'egypt',
+  
+  // Asian cities
+  'tokyo': 'japan',
+  'yokohama': 'japan',
+  'osaka': 'japan',
+  'nagoya': 'japan',
+  'sapporo': 'japan',
+  'fukuoka': 'japan',
+  'kobe': 'japan',
+  'kawasaki': 'japan',
+  'kyoto': 'japan',
+  'saitama': 'japan',
+  
+  'beijing': 'china',
+  'shanghai': 'china',
+  'guangzhou': 'china',
+  'shenzhen': 'china',
+  'tianjin': 'china',
+  'wuhan': 'china',
+  'dongguan': 'china',
+  'chengdu': 'china',
+  'nanjing': 'china',
+  'foshan': 'china',
+  
+  'seoul': 'south korea',
+  'busan': 'south korea',
+  'incheon': 'south korea',
+  'daegu': 'south korea',
+  'daejeon': 'south korea',
+  'gwangju': 'south korea',
+  'suwon': 'south korea',
+  'ulsan': 'south korea',
+  'changwon': 'south korea',
+  'goyang': 'south korea',
+  
+  'mumbai': 'india',
+  'delhi': 'india',
+  'bangalore': 'india',
+  'hyderabad': 'india',
+  'ahmedabad': 'india',
+  'chennai': 'india',
+  'kolkata': 'india',
+  'surat': 'india',
+  'pune': 'india',
+  'jaipur': 'india',
+  
+  // Australian cities
+  'sydney': 'australia',
+  'melbourne': 'australia',
+  'brisbane': 'australia',
+  'perth': 'australia',
+  'adelaide': 'australia',
+  'gold coast': 'australia',
+  'newcastle': 'australia',
+  'canberra': 'australia',
+  'sunshine coast': 'australia',
+  'wollongong': 'australia',
+  
+  // New Zealand cities
+  'auckland': 'new zealand',
+  'wellington': 'new zealand',
+  'christchurch': 'new zealand',
+  'hamilton': 'new zealand',
+  'tauranga': 'new zealand',
+  'napier': 'new zealand',
+  'hastings': 'new zealand',
+  'dunedin': 'new zealand',
+  'palmerston north': 'new zealand',
+  'nelson': 'new zealand',
+  
+  // Russian cities
+  'moscow': 'russia',
+  'saint petersburg': 'russia',
+  'novosibirsk': 'russia',
+  'yekaterinburg': 'russia',
+  'nizhny novgorod': 'russia',
+  'kazan': 'russia',
+  'chelyabinsk': 'russia',
+  'omsk': 'russia',
+  'samara': 'russia',
+  'rostov-on-don': 'russia',
+  
+  // Turkish names for major cities
+  'londra': 'united kingdom',
+  'paris': 'france',
+  'berlin': 'germany',
+  'roma': 'italy',
+  'madrid': 'spain',
+  'amsterdam': 'netherlands',
+  'bruksel': 'belgium',
+  'viyana': 'austria',
+  'zurich': 'switzerland',
+  'moskova': 'russia',
+  'pekin': 'china',
+  'tokyo': 'japan',
+  'seul': 'south korea',
+  'mumbai': 'india',
+  'sidney': 'australia',
+  'new york': 'united states',
+  'los angeles': 'united states',
+  'chicago': 'united states',
+  'toronto': 'canada',
+  'montreal': 'canada',
+  'vancouver': 'canada'
 };
 
 // Carrier type definition
@@ -806,8 +1244,9 @@ export async function calculateMixedBoxPricing(params: {
   const countryToRegion = await parseRegions(carrier);
   const { prices, weights } = await parsePricing(carrier);
 
-  // Find region for the country
-  const normalizedCountry = normalizeCountryName(country);
+  // Find region for the country (with enhanced city detection)
+  const resolvedCountry = resolveCityToCountry(country);
+  const normalizedCountry = normalizeCountryName(resolvedCountry);
   let region = countryToRegion.get(normalizedCountry);
 
   if (!region) {
@@ -946,8 +1385,9 @@ export async function calculateUPSDHLPricing(params: {
   const countryToRegion = await parseRegions(carrier);
   const { prices, weights } = await parsePricing(carrier);
 
-  // Find region for the country
-  const normalizedCountry = normalizeCountryName(country);
+  // Find region for the country (with enhanced city detection)
+  const resolvedCountry = resolveCityToCountry(country);
+  const normalizedCountry = normalizeCountryName(resolvedCountry);
   let region = countryToRegion.get(normalizedCountry);
 
   if (!region) {

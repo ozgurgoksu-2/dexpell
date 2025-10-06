@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { User, MapPin, Package, Phone, Mail, Globe } from 'lucide-react';
 import { translate, type SupportedLanguage } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { SelectablePriceCard } from '@/components/selectable-price-card';
+import usePriceCardStore from '@/stores/usePriceCardStore';
 
 interface FormData {
   // Sender Information
@@ -28,12 +30,34 @@ interface FormData {
   // Shipment Information
   content_description: string;
   content_value: string;
+  
+  // Selected carrier information
+  selected_carrier?: string;
+  selected_quote?: any;
 }
 
 export default function ShipmentRequestForm() {
   const [language, setLanguage] = useState<SupportedLanguage>('en');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  
+  // Use price card store
+  const { 
+    currentPriceCardData, 
+    selectedCarrier, 
+    selectedQuote, 
+    setSelectedCarrier,
+    clearSelectedCarrier 
+  } = usePriceCardStore();
+
+  const handleCarrierSelect = (carrier: string, quote: any) => {
+    setSelectedCarrier(carrier, quote);
+    setFormData(prev => ({
+      ...prev,
+      selected_carrier: carrier,
+      selected_quote: quote
+    }));
+  };
   
   const [formData, setFormData] = useState<FormData>({
     sender_name: '',
@@ -81,7 +105,18 @@ export default function ShipmentRequestForm() {
         body: JSON.stringify({
           ...formData,
           user_type: 'guest',
-          status: 'pending'
+          status: 'pending',
+          // Include price card information
+          selected_carrier: selectedCarrier,
+          selected_quote: selectedQuote,
+          destination_country: currentPriceCardData?.country,
+          package_quantity: currentPriceCardData?.quantity,
+          total_weight: currentPriceCardData?.totalWeight,
+          price_card_timestamp: currentPriceCardData?.timestamp,
+          // Enhanced shipping details
+          chargeable_weight: selectedQuote?.chargeableWeight,
+          cargo_price: selectedQuote?.totalPrice,
+          service_type: selectedQuote?.serviceType
         }),
       });
 
@@ -102,6 +137,7 @@ export default function ShipmentRequestForm() {
           content_description: '',
           content_value: ''
         });
+        clearSelectedCarrier();
       } else {
         setSubmitStatus('error');
       }
@@ -171,9 +207,61 @@ export default function ShipmentRequestForm() {
           </p>
         </div>
 
-        {/* Form */}
-        <div className="max-w-6xl mx-auto">
-          <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Main Content - Two Column Layout */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left Column - Price Cards */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-8">
+                <Card className="border-0 bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-indigo-600/20 to-purple-700/20 border-b border-indigo-500/30">
+                    <CardTitle className="flex items-center gap-4">
+                      <div className="p-3 bg-indigo-600 rounded-xl shadow-lg">
+                        <Package className="h-7 w-7 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-white">
+                          {language === 'tr' ? 'Kargo Seçenekleri' : 'Shipping Options'}
+                        </h2>
+                        <p className="text-sm text-gray-300 mt-1">
+                          {language === 'tr' ? 'Bir kargo firması seçin' : 'Select a shipping carrier'}
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    {currentPriceCardData ? (
+                      <SelectablePriceCard
+                        country={currentPriceCardData.country}
+                        quotes={currentPriceCardData.quotes}
+                        quantity={currentPriceCardData.quantity}
+                        totalWeight={currentPriceCardData.totalWeight}
+                        language={language}
+                        selectedCarrier={selectedCarrier || ''}
+                        onCarrierSelect={handleCarrierSelect}
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                        <div className="p-3 bg-gray-600/20 rounded-lg">
+                          <Package className="h-6 w-6 text-gray-400" />
+                        </div>
+                        <p className="text-gray-400 text-sm text-center">
+                          {language === 'tr' 
+                            ? 'Önce chat\'te kargo fiyatı hesaplayın, sonra buradan seçim yapabilirsiniz' 
+                            : 'Calculate shipping prices in chat first, then you can select here'
+                          }
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Right Column - Form */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmit} className="space-y-8">
             
             {/* Sender Information Block */}
             <Card className="border-0 bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm shadow-2xl">
@@ -360,6 +448,47 @@ export default function ShipmentRequestForm() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Selected Carrier Information */}
+            {selectedCarrier && selectedQuote && (
+              <Card className="border-0 bg-gradient-to-br from-green-800/20 to-green-900/20 backdrop-blur-sm shadow-2xl border border-green-500/30">
+                <CardHeader className="bg-gradient-to-r from-green-600/20 to-green-700/20 border-b border-green-500/30">
+                  <CardTitle className="flex items-center gap-4">
+                    <div className="p-3 bg-green-600 rounded-xl shadow-lg">
+                      <Package className="h-7 w-7 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">
+                        {language === 'tr' ? 'Seçilen Kargo' : 'Selected Carrier'}
+                      </h2>
+                      <p className="text-sm text-green-300 mt-1">
+                        {selectedCarrier} - ${selectedQuote.totalPrice.toFixed(2)}
+                      </p>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-400">{language === 'tr' ? 'Kargo Firması:' : 'Carrier:'}</span>
+                      <p className="text-white font-semibold">{selectedCarrier}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">{language === 'tr' ? 'Toplam Fiyat:' : 'Total Price:'}</span>
+                      <p className="text-green-400 font-bold">${selectedQuote.totalPrice.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">{language === 'tr' ? 'Servis Tipi:' : 'Service Type:'}</span>
+                      <p className="text-white">{selectedQuote.serviceType}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">{language === 'tr' ? 'Bölge:' : 'Region:'}</span>
+                      <p className="text-white">{selectedQuote.region || 'N/A'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Shipment Information Block */}
             <Card className="border-0 bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm shadow-2xl">
@@ -551,7 +680,9 @@ export default function ShipmentRequestForm() {
                 </CardContent>
               </Card>
             </div>
-          </form>
+              </form>
+            </div>
+          </div>
         </div>
 
         {/* Support Information */}

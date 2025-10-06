@@ -1,0 +1,283 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { 
+  Package, 
+  Truck,
+  CheckCircle,
+  Globe,
+  AlertTriangle,
+  Weight
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Carrier configuration with enhanced styling
+const CARRIER_CONFIG = {
+  UPS: {
+    name: 'UPS Express',
+    borderColor: 'border-blue-200 dark:border-blue-800',
+    bgColor: 'bg-blue-50 dark:bg-blue-950',
+    textColor: 'text-blue-700 dark:text-blue-300',
+    priceColor: 'text-blue-600 dark:text-blue-400',
+    logoPath: '/logos/ups-logo.png'
+  },
+  DHL: {
+    name: 'DHL Express',
+    borderColor: 'border-yellow-200 dark:border-yellow-800',
+    bgColor: 'bg-yellow-50 dark:bg-yellow-950',
+    textColor: 'text-yellow-700 dark:text-yellow-300',
+    priceColor: 'text-yellow-600 dark:text-yellow-400',
+    logoPath: '/logos/dhl-logo.png'
+  },
+  ARAMEX: {
+    name: 'ARAMEX Express',
+    borderColor: 'border-orange-200 dark:border-orange-800',
+    bgColor: 'bg-orange-50 dark:bg-orange-950',
+    textColor: 'text-orange-700 dark:text-orange-300',
+    priceColor: 'text-orange-600 dark:text-orange-400',
+    logoPath: '/logos/aramex-logo.png'
+  }
+};
+
+interface CarrierQuote {
+  carrier: 'UPS' | 'DHL' | 'ARAMEX';
+  pricePerBox?: number;
+  totalPrice: number;
+  available: boolean;
+  region?: number | string;
+  serviceType: string;
+  actualWeight?: number;
+  chargeableWeight?: number;
+}
+
+interface SelectablePriceCardProps {
+  country: string;
+  quotes: CarrierQuote[];
+  quantity?: number;
+  totalWeight?: number;
+  language?: 'en' | 'tr';
+  selectedCarrier?: string;
+  onCarrierSelect?: (carrier: string, quote: CarrierQuote) => void;
+}
+
+export function SelectablePriceCard({ 
+  country, 
+  quotes, 
+  quantity = 1,
+  totalWeight,
+  language = 'en',
+  selectedCarrier,
+  onCarrierSelect
+}: SelectablePriceCardProps) {
+  const availableQuotes = quotes.filter(q => q.available);
+  const unavailableQuotes = quotes.filter(q => !q.available);
+
+  // Sort quotes by price (lowest first)
+  const sortedQuotes = [...availableQuotes].sort((a, b) => a.totalPrice - b.totalPrice);
+
+  const getText = (key: string) => {
+    const texts = {
+      shippingTo: language === 'tr' ? `${country}'ya Gönderim` : `Shipping to ${country}`,
+      packages: language === 'tr' ? 'paket' : 'packages',
+      package: language === 'tr' ? 'paket' : 'package',
+      totalWeight: language === 'tr' ? 'Toplam Ağırlık:' : 'Total Weight:',
+      bestPrice: language === 'tr' ? 'En İyi Fiyat' : 'Best Price',
+      totalPrice: language === 'tr' ? 'Toplam Fiyat' : 'Total Price',
+      box: language === 'tr' ? 'kutu' : 'box',
+      boxes: language === 'tr' ? 'kutu' : 'boxes',
+      to: language === 'tr' ? `${country}'ya` : `To ${country}`,
+      notAvailable: language === 'tr' ? 'Mevcut Değil' : 'Not Available',
+      notAvailableFor: language === 'tr' ? `${country} için mevcut değil` : `Not available for ${country}`,
+      selected: language === 'tr' ? 'Seçildi' : 'Selected'
+    };
+    return texts[key as keyof typeof texts] || key;
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header with destination and summary */}
+      <div className="text-center space-y-3">
+        <div className="flex items-center justify-center gap-2 text-lg font-semibold text-white">
+          <Globe className="w-5 h-5 text-blue-400" />
+          <span>{getText('shippingTo')}</span>
+        </div>
+        <div className="flex items-center justify-center gap-4 text-sm">
+          {quantity > 1 && (
+            <div className="flex items-center gap-1">
+              <Package className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-300">{quantity} {getText('packages')}</span>
+            </div>
+          )}
+          {totalWeight && (
+            <div className="flex items-center gap-1">
+              <Weight className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-300">{getText('totalWeight')}</span>
+              <span className="font-semibold text-blue-400">
+                {totalWeight}kg
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Carrier Quote Cards */}
+      <div className="space-y-3">
+        {sortedQuotes.map((quote, index) => {
+          const config = CARRIER_CONFIG[quote.carrier];
+          const isLowest = index === 0 && sortedQuotes.length > 1;
+          const isSelected = selectedCarrier === quote.carrier;
+
+          return (
+            <motion.div
+              key={quote.carrier}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className={`relative cursor-pointer transition-all duration-200 ${
+                isSelected ? 'ring-2 ring-blue-500 scale-[1.02]' : 
+                isLowest ? 'ring-2 ring-green-500' : ''
+              }`}
+              onClick={() => onCarrierSelect?.(quote.carrier, quote)}
+            >
+              <Card className={`
+                ${isSelected 
+                  ? 'bg-blue-900/30 border-blue-500' 
+                  : 'bg-slate-800/50 border-gray-600 hover:bg-slate-700/50'
+                } 
+                relative overflow-hidden transition-all duration-200
+              `}>
+                {isLowest && !isSelected && (
+                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+                    {getText('bestPrice')}
+                  </div>
+                )}
+                
+                {isSelected && (
+                  <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+                    {getText('selected')}
+                  </div>
+                )}
+                
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white border shadow-sm flex items-center justify-center p-1">
+                        <Image
+                          src={config.logoPath}
+                          alt={`${quote.carrier} logo`}
+                          width={quote.carrier === 'UPS' ? 36 : 32}
+                          height={quote.carrier === 'UPS' ? 36 : 32}
+                          className="object-contain"
+                        />
+                      </div>
+                      <div>
+                        <CardTitle className={`text-lg ${isSelected ? 'text-blue-300' : 'text-white'}`}>
+                          {config.name}
+                        </CardTitle>
+                        <div className="text-xs text-gray-400">
+                          {quote.region && `Region ${quote.region}`}
+                        </div>
+                      </div>
+                    </div>
+                    <CheckCircle className={`w-5 h-5 ${isSelected ? 'text-blue-400' : 'text-green-400'}`} />
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Price display */}
+                  <div className="text-center">
+                    <div className={`text-3xl font-bold ${isSelected ? 'text-blue-400' : config.priceColor}`}>
+                      ${quote.totalPrice.toFixed(2)}
+                    </div>
+                    <div className="text-sm text-gray-400">{getText('totalPrice')}</div>
+                  </div>
+
+                  {/* Service details */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Truck className="w-4 h-4" />
+                      <span>{quote.serviceType}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Globe className="w-4 h-4" />
+                      <span>{getText('to')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Package className="w-4 h-4" />
+                      <span>{quantity} {quantity !== 1 ? getText('boxes') : getText('box')}</span>
+                    </div>
+                    {(quote.chargeableWeight || totalWeight) && (
+                      <div className="flex items-center gap-2 text-sm text-gray-300">
+                        <Weight className="w-4 h-4" />
+                        <span>{quote.chargeableWeight || totalWeight} kg total</span>
+                      </div>
+                    )}
+                    
+                    {/* Delivery time */}
+                    <div className="flex items-center gap-2 text-sm font-medium text-green-400 mt-3 pt-3 border-t border-gray-600">
+                      <CheckCircle className="w-4 h-4" />
+                      <span>
+                        {language === 'tr' 
+                          ? 'Tahmini kargo süresi 1-3 günüdür' 
+                          : 'Delivery time: 1-3 days'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          );
+        })}
+
+        {/* Unavailable carriers */}
+        {unavailableQuotes.map((quote, index) => {
+          const config = CARRIER_CONFIG[quote.carrier];
+
+          return (
+            <motion.div
+              key={`unavailable-${quote.carrier}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: (sortedQuotes.length + index) * 0.1 }}
+            >
+              <Card className="border-gray-600 bg-gray-800/30 opacity-60">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-gray-700 border flex items-center justify-center p-1">
+                        <Image
+                          src={config.logoPath}
+                          alt={`${quote.carrier} logo`}
+                          width={quote.carrier === 'UPS' ? 36 : 32}
+                          height={quote.carrier === 'UPS' ? 36 : 32}
+                          className="object-contain opacity-50"
+                        />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg text-gray-400">
+                          {config.name}
+                        </CardTitle>
+                        <div className="text-xs text-gray-500">{getText('notAvailable')}</div>
+                      </div>
+                    </div>
+                    <AlertTriangle className="w-5 h-5 text-gray-500" />
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="text-center text-gray-500">
+                    <div className="text-sm">{getText('notAvailableFor')}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default SelectablePriceCard;

@@ -119,7 +119,10 @@ function getAramexPrice(
 async function isAramexSupported(country: string): Promise<{ supported: boolean; countryKey?: string }> {
   const { countries: pricingCountries } = await parseAramexPricing();
   
-  const normalizedCountry = country.toLowerCase();
+  // First try to resolve city to country, then normalize
+  const { resolveCityToCountry, normalizeCountryName } = await import('@/lib/cargo-pricing-core');
+  const resolvedCountry = resolveCityToCountry(country);
+  const normalizedCountry = normalizeCountryName(resolvedCountry).toLowerCase();
   
   // Check pricing countries first (these are the main supported ones)
   for (const pricingCountry of pricingCountries) {

@@ -28,6 +28,17 @@ interface FormSubmission {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
   updated_at: string;
+  // Price card information
+  selected_carrier: string | null;
+  selected_quote: any | null;
+  destination_country: string | null;
+  package_quantity: number | null;
+  total_weight: number | null;
+  price_card_timestamp: number | null;
+  // Enhanced shipping details
+  chargeable_weight: number | null;
+  cargo_price: number | null;
+  service_type: string | null;
 }
 
 export default function FormsPage() {

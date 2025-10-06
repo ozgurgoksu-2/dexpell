@@ -35,6 +35,17 @@ interface FormSubmission {
   status: 'waiting' | 'accepted' | 'declined' | 'pending';
   created_at: string;
   updated_at: string;
+  // Price card information
+  selected_carrier: string | null;
+  selected_quote: any | null;
+  destination_country: string | null;
+  package_quantity: number | null;
+  total_weight: number | null;
+  price_card_timestamp: number | null;
+  // Enhanced shipping details
+  chargeable_weight: number | null;
+  cargo_price: number | null;
+  service_type: string | null;
 }
 
 export default function RequestsPage() {
@@ -320,6 +331,18 @@ export default function RequestsPage() {
                           <span className="text-muted-foreground">Value: </span>
                           <span className="font-medium">${request.content_value}</span>
                         </div>
+                        {/* Shipping Quote Summary */}
+                        {request.selected_carrier && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">Shipping: </span>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {request.selected_carrier}
+                            </span>
+                            {request.cargo_price && (
+                              <span className="font-semibold text-green-600">${request.cargo_price}</span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Right Side - Status and Date */}
@@ -454,6 +477,66 @@ export default function RequestsPage() {
                             </div>
                           </div>
                         </div>
+
+                        {/* Shipping Quote Details */}
+                        {(request.selected_carrier || request.cargo_price || request.chargeable_weight || request.service_type) && (
+                          <div className="md:col-span-2">
+                            <h4 className="font-semibold mb-3 flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                              </svg>
+                              Shipping Quote Details
+                            </h4>
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                {request.selected_carrier && (
+                                  <div>
+                                    <span className="text-muted-foreground">Selected Carrier: </span>
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                      {request.selected_carrier}
+                                    </span>
+                                  </div>
+                                )}
+                                {request.cargo_price && (
+                                  <div>
+                                    <span className="text-muted-foreground">Cargo Price: </span>
+                                    <span className="font-semibold text-green-600">${request.cargo_price}</span>
+                                  </div>
+                                )}
+                                {request.chargeable_weight && (
+                                  <div>
+                                    <span className="text-muted-foreground">Chargeable Weight: </span>
+                                    <span className="font-medium text-orange-600">{request.chargeable_weight} kg</span>
+                                  </div>
+                                )}
+                                {request.service_type && (
+                                  <div>
+                                    <span className="text-muted-foreground">Service Type: </span>
+                                    <span className="font-medium">{request.service_type}</span>
+                                  </div>
+                                )}
+                                {request.destination_country && (
+                                  <div>
+                                    <span className="text-muted-foreground">Destination Country: </span>
+                                    <span className="font-medium">{request.destination_country}</span>
+                                  </div>
+                                )}
+                                {request.package_quantity && (
+                                  <div>
+                                    <span className="text-muted-foreground">Package Quantity: </span>
+                                    <span className="font-medium">{request.package_quantity} packages</span>
+                                  </div>
+                                )}
+                                {request.total_weight && (
+                                  <div>
+                                    <span className="text-muted-foreground">Total Weight: </span>
+                                    <span className="font-medium">{request.total_weight} kg</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

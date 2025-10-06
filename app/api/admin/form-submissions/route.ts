@@ -117,6 +117,17 @@ export async function POST(request: NextRequest) {
         user_email: body.user_email || null,
         user_id: body.user_id || null,
         status: body.status || 'pending',
+        // Price card information
+        selected_carrier: body.selected_carrier || null,
+        selected_quote: body.selected_quote || null,
+        destination_country: body.destination_country || null,
+        package_quantity: body.package_quantity || null,
+        total_weight: body.total_weight || null,
+        price_card_timestamp: body.price_card_timestamp || null,
+        // Enhanced shipping details
+        chargeable_weight: body.chargeable_weight || null,
+        cargo_price: body.cargo_price || null,
+        service_type: body.service_type || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })

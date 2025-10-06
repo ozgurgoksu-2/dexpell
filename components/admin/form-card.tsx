@@ -16,7 +16,10 @@ import {
   X,
   DollarSign,
   Globe,
-  FileText
+  FileText,
+  Truck,
+  Weight,
+  Hash
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -41,6 +44,17 @@ interface FormSubmission {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
   updated_at: string;
+  // Price card information
+  selected_carrier: string | null;
+  selected_quote: any | null;
+  destination_country: string | null;
+  package_quantity: number | null;
+  total_weight: number | null;
+  price_card_timestamp: number | null;
+  // Enhanced shipping details
+  chargeable_weight: number | null;
+  cargo_price: number | null;
+  service_type: string | null;
 }
 
 interface FormCardProps {
@@ -117,6 +131,46 @@ export function FormCard({ submission, isExpanded, onToggle }: FormCardProps) {
               <span className="truncate">{formatDate(submission.created_at).split(' - ')[0]}</span>
             </div>
           </div>
+          
+          {/* Enhanced Price Card Summary */}
+          {submission.selected_carrier && (
+            <div className="mt-3 pt-3 border-t">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-600">Shipping Quote</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                      {submission.selected_carrier}
+                    </Badge>
+                    {submission.cargo_price && (
+                      <span className="text-sm font-semibold text-green-600">
+                        ${submission.cargo_price}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {(submission.chargeable_weight || submission.service_type) && (
+                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                    {submission.chargeable_weight && (
+                      <div className="flex items-center gap-1">
+                        <Weight className="h-3 w-3" />
+                        <span>Chargeable: {submission.chargeable_weight}kg</span>
+                      </div>
+                    )}
+                    {submission.service_type && (
+                      <div className="flex items-center gap-1">
+                        <Package className="h-3 w-3" />
+                        <span>{submission.service_type}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -264,6 +318,129 @@ export function FormCard({ submission, isExpanded, onToggle }: FormCardProps) {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Enhanced Price Card Information */}
+              {(submission.selected_carrier || submission.destination_country || submission.package_quantity || submission.total_weight) && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <h3 className="font-semibold flex items-center gap-2">
+                      <Truck className="h-4 w-4" />
+                      Shipping Quote Details
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Main Shipping Info */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {submission.selected_carrier && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Selected Carrier</label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                              {submission.selected_carrier}
+                            </Badge>
+                          </div>
+                        </div>
+                      )}
+                      {submission.cargo_price && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Cargo Price</label>
+                          <p className="font-semibold text-lg text-green-600">${submission.cargo_price}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Weight Information */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {submission.total_weight && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Total Weight</label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Weight className="h-4 w-4 text-muted-foreground" />
+                            <p className="font-medium">{submission.total_weight} kg</p>
+                          </div>
+                        </div>
+                      )}
+                      {submission.chargeable_weight && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Chargeable Weight</label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Weight className="h-4 w-4 text-orange-500" />
+                            <p className="font-medium text-orange-600">{submission.chargeable_weight} kg</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Package and Service Info */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {submission.package_quantity && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Package Quantity</label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Hash className="h-4 w-4 text-muted-foreground" />
+                            <p className="font-medium">{submission.package_quantity} packages</p>
+                          </div>
+                        </div>
+                      )}
+                      {submission.service_type && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Service Type</label>
+                          <p className="font-medium mt-1">{submission.service_type}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {submission.destination_country && (
+                      <div>
+                        <label className="text-sm text-muted-foreground">Destination Country</label>
+                        <p className="font-medium">{submission.destination_country}</p>
+                      </div>
+                    )}
+
+                    {/* Detailed Quote Information */}
+                    {submission.selected_quote && (
+                      <div>
+                        <label className="text-sm text-muted-foreground">Detailed Quote</label>
+                        <div className="bg-gray-50 p-3 rounded-lg space-y-2 mt-1">
+                          {submission.selected_quote.totalPrice && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Total Price</span>
+                              <span className="font-semibold text-green-600">
+                                ${submission.selected_quote.totalPrice}
+                              </span>
+                            </div>
+                          )}
+                          {submission.selected_quote.serviceType && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Service Type</span>
+                              <span className="text-sm font-medium">{submission.selected_quote.serviceType}</span>
+                            </div>
+                          )}
+                          {submission.selected_quote.pricePerBox && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Price per Box</span>
+                              <span className="text-sm font-medium">${submission.selected_quote.pricePerBox}</span>
+                            </div>
+                          )}
+                          {submission.selected_quote.actualWeight && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Actual Weight</span>
+                              <span className="text-sm font-medium">{submission.selected_quote.actualWeight} kg</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {submission.price_card_timestamp && (
+                      <div>
+                        <label className="text-sm text-muted-foreground">Quote Generated</label>
+                        <p className="text-sm">{format(new Date(submission.price_card_timestamp), 'MMM dd, yyyy - hh:mm a')}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">

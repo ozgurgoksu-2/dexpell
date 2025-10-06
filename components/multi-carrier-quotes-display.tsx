@@ -2,6 +2,8 @@
 
 // Removed unused imports
 import { EnhancedPriceCard } from './enhanced-price-card';
+import usePriceCardStore from '@/stores/usePriceCardStore';
+import { useEffect } from 'react';
 
 
 interface CarrierQuote {
@@ -56,6 +58,25 @@ export function MultiCarrierQuotesDisplay({
   showDetailedAnalysis = false,
   language = 'en',
 }: MultiCarrierQuotesDisplayProps) {
+  const { setPriceCardData } = usePriceCardStore();
+  
+  // Save price card data to store when component mounts (chat'i etkilemez)
+  useEffect(() => {
+    try {
+      if (quotes && quotes.length > 0) {
+        setPriceCardData({
+          country,
+          quotes,
+          quantity,
+          totalWeight: dimensionalAnalysis?.chargeableWeightTotal,
+          timestamp: Date.now(),
+        });
+      }
+    } catch (error) {
+      // Hata olursa sadece log yaz, chat'i etkileme
+      console.log('Price card store error (non-critical):', error);
+    }
+  }, [country, quotes, quantity, dimensionalAnalysis?.chargeableWeightTotal, setPriceCardData]);
   
   // Use the enhanced price card component
   return (
