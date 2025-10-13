@@ -1,6 +1,7 @@
 import { MessageItem } from "@/lib/assistant";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import Image from "next/image";
 
 interface MessageProps {
   message: MessageItem;
@@ -25,7 +26,17 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className="flex">
+          <div className="flex items-start gap-3">
+            {/* Nova Profile Photo */}
+            <div className="flex-shrink-0">
+              <Image
+                src="/videos/nova-pp.png"
+                alt="Nova Assistant"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
+            </div>
             <div className="mr-4 rounded-[16px] px-4 py-2 md:mr-24 text-black bg-white font-light">
               <div>
                 <ReactMarkdown>

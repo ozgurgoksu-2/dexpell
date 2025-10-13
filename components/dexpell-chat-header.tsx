@@ -7,6 +7,7 @@ import { LanguageSwitcher } from './language-switcher';
 import { translate, type SupportedLanguage } from '@/lib/i18n';
 import { useEffect, useState } from 'react';
 import useConversationStore from '@/stores/useConversationStore';
+import Image from 'next/image';
 
 function PureDexpellChatHeader() {
   const router = useRouter();
@@ -28,22 +29,36 @@ function PureDexpellChatHeader() {
   }, [setConversationLanguage, updateInitialMessage]);
 
   return (
-    <header className="flex sticky top-0 bg-background py-2 sm:py-1.5 items-center px-3 sm:px-2 md:px-2 gap-2 border-b sm:border-b-0 safe-area-inset-top">
-      <Button
-        variant="outline"
-        className="order-2 md:order-1 md:px-2 px-3 sm:px-2 md:h-fit ml-auto md:ml-0 min-h-[44px] sm:min-h-fit"
-        onClick={() => {
-          router.push('/');
-          router.refresh();
-        }}
-        type="button"
-      >
-        <Plus size={16} />
-        <span className="md:sr-only ml-2 sm:ml-0">{translate(lang, 'chat.new')}</span>
-      </Button>
+    <header className="flex sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-3 sm:py-4 items-center px-4 sm:px-6 gap-4 border-b safe-area-inset-top">
+      {/* Logo and Brand */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Image
+          src="/images/dexpell-logo.jpg"
+          alt="Dexpell Logo"
+          width={32}
+          height={32}
+          className="rounded-lg sm:size-10"
+        />
+        <span className="text-lg sm:text-xl font-bold">
+          {translate(lang, 'nav.brand')}
+        </span>
+      </div>
 
-      <div className="ml-auto">
+      {/* Right side controls */}
+      <div className="flex items-center gap-2 sm:gap-4 ml-auto">
         <LanguageSwitcher />
+        <Button
+          variant="outline"
+          className="px-3 sm:px-4 min-h-[44px] sm:min-h-fit"
+          onClick={() => {
+            router.push('/');
+            router.refresh();
+          }}
+          type="button"
+        >
+          <Plus size={16} />
+          <span className="ml-2">{translate(lang, 'chat.new')}</span>
+        </Button>
       </div>
     </header>
   );
