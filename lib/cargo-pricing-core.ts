@@ -74,100 +74,184 @@ export function normalizeCountryName(country: string): string {
   return normalizedCountry.replace(/[^a-z\s]/g, '').replace(/\s+/g, ' ').trim();
 }
 
-// Common country name translations (English to Turkish)
+// Common country name translations (English to Turkish and Turkish to English)
+// Based on ALL countries found in regions.csv and dhl-regions.csv
 const countryTranslations: Record<string, string> = {
+  // === ENGLISH TO TURKISH (when OpenAI converts Turkish input to English) ===
   'germany': 'almanya',
-  'france': 'fransa',
-  'italy': 'italya',
+  'austria': 'avusturya',
+  'belgium': 'belcika',
+  'bulgaria': 'bulgaristan',
+  'switzerland': 'isvicre',
+  'denmark': 'danimarka',
   'spain': 'ispanya',
+  'france': 'fransa',
   'united kingdom': 'ingiltere',
   'uk': 'ingiltere',
   'england': 'ingiltere',
-  'netherlands': 'hollanda',
-  'belgium': 'belcika',
-  'austria': 'avusturya',
-  'switzerland': 'isvicre',
-  'denmark': 'danimarka',
-  'sweden': 'isvec',
-  'norway': 'norvec',
-  'finland': 'finlandiya',
-  'poland': 'polonya',
-  'czech republic': 'cekya',
-  'czechia': 'cekya',
-  'czechia republic': 'cekya',
-  'hungary': 'macaristan',
-  'romania': 'romanya',
-  'bulgaria': 'bulgaristan',
   'greece': 'yunanistan',
-  'portugal': 'portekiz',
   'ireland': 'irlanda',
-  'croatia': 'hirvatistan',
-  'serbia': 'sirbistan',
+  'italy': 'italya',
+  'liechtenstein': 'lihtenstayn',
+  'luxembourg': 'luksemburg',
+  'monaco': 'monako',
+  'netherlands': 'hollanda',
+  'czechia': 'cekya',
+  'czech republic': 'cekya',  // Maps to DHL CSV name
+  'finland': 'finlandiya',
+  'hungary': 'macaristan',
+  'malta': 'malta',
+  'norway': 'norvec',
+  'poland': 'polonya',
+  'portugal': 'portekiz',
+  'romania': 'romanya',
+  'sweden': 'isvec',
   'slovenia': 'slovenya',
   'slovakia': 'slovakya',
+  'andorra': 'andorra',
+  'united arab emirates': 'birlesik arap emirlikleri',
+  'uae': 'birlesik arap emirlikleri',
+  'afghanistan': 'afganistan',
+  'albania': 'arnavutluk',
+  'armenia': 'ermenistan',
+  'azerbaijan': 'azerbaycan',
+  'bosnia and herzegovina': 'bosna hersek',
+  'bahrain': 'bahreyn',
+  'belarus': 'belarus',
+  'cyprus': 'kibris',
+  'estonia': 'estonya',
+  'egypt': 'misir',
+  'georgia': 'gurcistan',
+  'gibraltar': 'cebelitarik',
+  'croatia': 'hirvatistan',
+  'israel': 'israil',
+  'iraq': 'irak',
+  'jordan': 'urdun',
+  'kyrgyzstan': 'kirgizistan',
+  'kuwait': 'kuveyt',
+  'kazakhstan': 'kazakistan',
+  'lebanon': 'lubnan',
   'lithuania': 'litvanya',
   'latvia': 'letonya',
-  'estonia': 'estonya',
-  'united states': 'amerika birlesik devletleri',
-  'usa': 'amerika birlesik devletleri',
+  'moldova': 'moldova',
+  'montenegro': 'karadag',
+  'north macedonia': 'kuzey makedonya',
+  'oman': 'umman',
+  'pakistan': 'pakistan',
+  'palestine': 'filistin',
+  'qatar': 'katar',
+  'russia': 'rusya federasyonu',
+  'russian federation': 'rusya federasyonu',
+  'saudi arabia': 'suudi arabistan',
+  'singapore': 'singapur',
+  'san marino': 'san marino',
+  'tajikistan': 'tacikistan',
+  'turkmenistan': 'turkmenistan',
+  'ukraine': 'ukrayna',
+  'uzbekistan': 'ozbekistan',
+  'yemen': 'yemen',
   'canada': 'kanada',
   'mexico': 'meksika',
+  'puerto rico': 'porto riko',
+  'united states': 'amerika birlesik devletleri',
+  'usa': 'amerika birlesik devletleri',
   'china': 'cin',
-  'japan': 'japonya',
-  'south korea': 'guney kore',
-  'australia': 'avustralya',
-  'new zealand': 'yeni zelanda',
-  'india': 'hindistan',
-  'russia': 'rusya',
-  'ukraine': 'ukrayna',
-  'belarus': 'belarus',
-  'kazakhstan': 'kazakistan',
-  'uzbekistan': 'ozbekistan',
-  'turkmenistan': 'turkmenistan',
-  'azerbaijan': 'azerbaycan',
-  'armenia': 'ermenistan',
-  'georgia': 'gurcistan',
-  'iran': 'iran',
-  'iraq': 'irak',
-  'syria': 'suriye',
-  'lebanon': 'lubnan',
-  'jordan': 'urdun',
-  'israel': 'israil',
-  'palestine': 'filistin',
-  'saudi arabia': 'suudi arabistan',
-  'united arab emirates': 'birleik arap emirlikleri',
-  'uae': 'birleik arap emirlikleri',
-  'dubai': 'birleik arap emirlikleri',
-  'abu dhabi': 'birleik arap emirlikleri', 
-  'sharjah': 'birleik arap emirlikleri',
-  'emirates': 'birleik arap emirlikleri',
-  'emirate': 'birleik arap emirlikleri',
-  'dxb': 'birleik arap emirlikleri',
-  'kuwait': 'kuveyt',
-  'qatar': 'katar',
-  'bahrain': 'bahreyn',
-  'oman': 'umman',
-  'yemen': 'yemen',
-  'egypt': 'misir',
-  'libya': 'libya',
-  'tunisia': 'tunus',
   'algeria': 'cezayir',
-  'morocco': 'fas',
-  'south africa': 'guney afrika',
-  'nigeria': 'nijerya',
+  'faroe islands': 'faroe adalari',
+  'greenland': 'gronland',
+  'hong kong': 'hong kong',
+  'indonesia': 'endonezya',
+  'india': 'hindistan',
+  'iceland': 'izlanda',
+  'japan': 'japonya',
+  'korea': 'kore',
+  'south korea': 'guney kore',
+  'libya': 'libya',
+  'mongolia': 'mogolistan',
+  'macau': 'makao',
+  'malaysia': 'malezya',
+  'philippines': 'filipinler',
+  'sierra leone': 'sierra leone',
+  'thailand': 'tayland',
+  'tunisia': 'tunus',
+  'taiwan': 'tayvan',
+  'australia': 'avustralya',
+  'bangladesh': 'banglades',
+  'brunei': 'brunei',
+  'bhutan': 'butan',
   'kenya': 'kenya',
-  'ethiopia': 'etiyopya',
-  'ghana': 'gana',
-  'brazil': 'brezilya',
+  'cambodia': 'kambocya',
+  'laos': 'lao demokratik halk cumhuriyeti',
+  'sri lanka': 'sri lanka',
+  'lesotho': 'lesoto',
+  'morocco': 'fas',
+  'myanmar': 'myanmar',
+  'nigeria': 'nijerya',
+  'nepal': 'nepal',
+  'new zealand': 'yeni zelanda',
+  'eswatini': 'esvatini',
+  'vietnam': 'vietnam',
+  'south africa': 'guney afrika',
   'argentina': 'arjantin',
+  'brazil': 'brezilya',
   'chile': 'sili',
   'colombia': 'kolombiya',
-  'peru': 'peru',
-  'venezuela': 'venezuela',
+  'costa rica': 'kosta rika',
   'ecuador': 'ekvador',
-  'uruguay': 'uruguay',
+  'guatemala': 'guatemala',
+  'guyana': 'guyana',
+  'honduras': 'honduras',
+  'haiti': 'haiti',
+  'jamaica': 'jamaika',
+  'nicaragua': 'nikaragua',
+  'panama': 'panama',
+  'peru': 'peru',
   'paraguay': 'paraguay',
-  'bolivia': 'bolivya'
+  'uruguay': 'uruguay',
+  'venezuela': 'venezuela',
+  'bolivia': 'bolivya',
+  'angola': 'angola',
+  'ethiopia': 'etiyopya',
+  'ghana': 'gana',
+  'iran': 'iran',
+  'syria': 'suriye',
+  'dubai': 'birlesik arap emirlikleri',
+  'abu dhabi': 'birlesik arap emirlikleri',
+  'sharjah': 'birlesik arap emirlikleri',
+  'emirates': 'birlesik arap emirlikleri',
+  
+  // === TURKISH TO TURKISH (keep as-is since CSV files use Turkish names) ===
+  'almanya': 'almanya',
+  'avusturya': 'avusturya',
+  'belcika': 'belcika',
+  'bulgaristan': 'bulgaristan',
+  'isvicre': 'isvicre',
+  'danimarka': 'danimarka',
+  'ispanya': 'ispanya',
+  'fransa': 'fransa',
+  'birlesik krallik': 'birlesik krallik',
+  'ingiltere': 'ingiltere',
+  'yunanistan': 'yunanistan',
+  'irlanda': 'irlanda',
+  'italya': 'italya',
+  'lihtenstayn': 'lihtenstayn',
+  'luksemburg': 'luksemburg',
+  'monako': 'monako',
+  'hollanda': 'hollanda',
+  'cekya': 'cekya',
+  'cek cumhuriyeti': 'cek cumhuriyeti',
+  'finlandiya': 'finlandiya',
+  'macaristan': 'macaristan',
+  'polanya': 'polanya',  // DHL variant of Poland
+  'beyaz rusya': 'beyaz rusya',  // DHL variant for Belarus
+  'latviya': 'latviya',  // DHL variant of Latvia
+  'moldavya cumhuriyeti': 'moldavya cumhuriyeti',  // DHL variant of Moldova
+  'montegero': 'montegero',  // DHL variant of Montenegro
+  'katar devleti': 'katar devleti',  // UPS variant of Qatar
+  'abd': 'abd',  // DHL abbreviation for USA
+  'cin halk cum': 'cin halk cum',  // DHL variant of China
+  'cin eyaleti': 'cin eyaleti',  // UPS variant of China Province
+  'brunei sultanligi': 'brunei sultanligi'  // UPS variant of Brunei
 };
 
 // Comprehensive city-to-country mapping for better detection
@@ -540,7 +624,7 @@ const cityToCountryMapping: Record<string, string> = {
   'auckland': 'new zealand',
   'wellington': 'new zealand',
   'christchurch': 'new zealand',
-  'hamilton': 'new zealand',
+  'hamilton nz': 'new zealand',
   'tauranga': 'new zealand',
   'napier': 'new zealand',
   'hastings': 'new zealand',
@@ -560,28 +644,15 @@ const cityToCountryMapping: Record<string, string> = {
   'samara': 'russia',
   'rostov-on-don': 'russia',
   
-  // Turkish names for major cities
+  // Turkish names for major cities (only non-duplicates)
   'londra': 'united kingdom',
-  'paris': 'france',
-  'berlin': 'germany',
   'roma': 'italy',
-  'madrid': 'spain',
-  'amsterdam': 'netherlands',
   'bruksel': 'belgium',
   'viyana': 'austria',
-  'zurich': 'switzerland',
   'moskova': 'russia',
   'pekin': 'china',
-  'tokyo': 'japan',
   'seul': 'south korea',
-  'mumbai': 'india',
-  'sidney': 'australia',
-  'new york': 'united states',
-  'los angeles': 'united states',
-  'chicago': 'united states',
-  'toronto': 'canada',
-  'montreal': 'canada',
-  'vancouver': 'canada'
+  'sidney': 'australia'
 };
 
 // Carrier type definition
@@ -1268,7 +1339,7 @@ export async function calculateMixedBoxPricing(params: {
   let region = countryToRegion.get(normalizedCountry);
 
   if (!region) {
-    // Try translation from English to Turkish
+    // Try translation from English to Turkish or Turkish to English
     const translatedCountry = countryTranslations[normalizedCountry];
     if (translatedCountry) {
       region = countryToRegion.get(translatedCountry);
@@ -1286,6 +1357,13 @@ export async function calculateMixedBoxPricing(params: {
       // Special UAE matching
       if ((normalizedCountry.includes('emirat') || normalizedCountry.includes('uae') || normalizedCountry.includes('dubai')) &&
           (csvCountry.includes('emirlik') || csvCountry.includes('arap'))) {
+        region = csvRegion;
+        break;
+      }
+      
+      // Special Czech Republic matching for both "çekya" and "cek cumhuriyeti"
+      if ((normalizedCountry.includes('cek') || normalizedCountry.includes('czech')) &&
+          (csvCountry.includes('cek') || csvCountry.includes('czech'))) {
         region = csvRegion;
         break;
       }
@@ -1412,7 +1490,7 @@ export async function calculateUPSDHLPricing(params: {
   let region = countryToRegion.get(normalizedCountry);
 
   if (!region) {
-    // Try translation from English to Turkish
+    // Try translation from English to Turkish or Turkish to English
     const translatedCountry = countryTranslations[normalizedCountry];
     if (translatedCountry) {
       region = countryToRegion.get(translatedCountry);
@@ -1430,6 +1508,13 @@ export async function calculateUPSDHLPricing(params: {
       // Special UAE matching
       if ((normalizedCountry.includes('emirat') || normalizedCountry.includes('uae') || normalizedCountry.includes('dubai')) &&
           (csvCountry.includes('emirlik') || csvCountry.includes('arap'))) {
+        region = csvRegion;
+        break;
+      }
+      
+      // Special Czech Republic matching for both "çekya" and "cek cumhuriyeti"
+      if ((normalizedCountry.includes('cek') || normalizedCountry.includes('czech')) &&
+          (csvCountry.includes('cek') || csvCountry.includes('czech'))) {
         region = csvRegion;
         break;
       }
