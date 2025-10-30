@@ -155,6 +155,9 @@ const countryTranslations: Record<string, string> = {
   'puerto rico': 'porto riko',
   'united states': 'amerika birlesik devletleri',
   'usa': 'amerika birlesik devletleri',
+  'us': 'amerika birlesik devletleri',
+  'america': 'amerika birlesik devletleri',
+  'united states of america': 'amerika birlesik devletleri',
   'china': 'cin',
   'algeria': 'cezayir',
   'faroe islands': 'faroe adalari',
@@ -248,7 +251,9 @@ const countryTranslations: Record<string, string> = {
   'moldavya cumhuriyeti': 'moldavya cumhuriyeti',  // DHL variant of Moldova
   'montegero': 'montegero',  // DHL variant of Montenegro
   'katar devleti': 'katar devleti',  // UPS variant of Qatar
-  'abd': 'abd',  // DHL abbreviation for USA
+  'abd': 'amerika birlesik devletleri',  // Turkish abbreviation for USA
+  'amerika': 'amerika birlesik devletleri',  // Short form in Turkish
+  'amerika birlesik devletleri': 'amerika birlesik devletleri',  // Full Turkish name
   'cin halk cum': 'cin halk cum',  // DHL variant of China
   'cin eyaleti': 'cin eyaleti',  // UPS variant of China Province
   'brunei sultanligi': 'brunei sultanligi'  // UPS variant of Brunei

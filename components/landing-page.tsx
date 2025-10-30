@@ -225,6 +225,31 @@ export function LandingPage() {
             {translate(language, 'hero.subtitle')}
           </motion.p>
 
+          {/* Feature Badges - 2x2 Grid */}
+          <motion.div
+            className="mb-8 sm:mb-10 grid grid-cols-2 gap-3 max-w-2xl mx-auto"
+            variants={fadeInUp}
+          >
+            {(() => {
+              const badges = translate(language, 'hero.badges');
+              const badgesArray = Array.isArray(badges) ? badges : [
+                language === 'tr' ? 'Gerçek ekip tonu & uzmanlığı' : 'Real team tone & expertise',
+                language === 'tr' ? 'Politika ve onay akışlarına uyum' : 'Policy and approval flow compliance',
+                language === 'tr' ? 'WhatsApp • Web • E-posta' : 'WhatsApp • Web • Email',
+                language === 'tr' ? 'Navlun & transit & toplam maliyet' : 'Freight & transit & total cost'
+              ];
+              
+              return badgesArray.map((badge, index) => (
+                <div 
+                  key={index}
+                  className="px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-center text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  {badge}
+                </div>
+              ));
+            })()}
+          </motion.div>
+
           <motion.div
             className="mb-12 sm:mb-16 rounded-2xl bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-6 sm:p-8 lg:p-10 border border-primary/10 ring-1 ring-primary/5"
             variants={fadeInUp}

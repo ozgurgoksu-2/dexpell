@@ -29,11 +29,11 @@ export const messages: Record<SupportedLanguage, Messages> = {
     },
     hero: {
       title: {
-        prefix: '10 Years of Logistics Experience,',
-        highlight: 'Now with AI',
+        prefix: "Dexpell's",
+        highlight: 'Digital Twin',
       },
       subtitle:
-        'Thousands of shipping experiences, millions of delivery points, all unified in one smart platform.',
+        'This site is the fully AI-transformed digital version of Dexpell. Our corporate memory, processes, and expertise are securely processed; our customers speak with the best version of our team 24/7, get quotes, and reach solutions.',
       explainer:
         'analyzes historical shipments and current market data to provide you with the best shipping rates and optimal solutions.',
       explainer2:
@@ -43,6 +43,12 @@ export const messages: Record<SupportedLanguage, Messages> = {
         prefix: 'You just make the request —',
         suffix: 'Dexpell.ai takes care of the rest.',
       },
+      badges: [
+        'Real team tone & expertise',
+        'Policy and approval flow compliance',
+        'WhatsApp • Web • Email',
+        'Freight & transit & total cost'
+      ],
     },
     features: {
       heading: {
@@ -109,7 +115,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
       placeholder: "Ask about shipping costs (e.g. '5kg to Germany')...",
       wait: 'Please wait for the model to finish its response!',
       welcome: {
-        title: 'Hello! I\'m Nova 😊',
+        title: 'Hello! I\'m Burcu 😊',
         subtitle: 'I handle courier transportation pricing at Dexpell. Shall I calculate the most suitable price for you right away?',
       },
       suggestions: {
@@ -141,9 +147,9 @@ export const messages: Record<SupportedLanguage, Messages> = {
       clickPrompt: 'Click on any available team member to watch their introduction video',
       agents: {
         nova: {
-          name: 'Nova',
+          name: 'Burcu',
           title: 'Cargo Pricing Executive',
-          description: 'Agile, precise, and street-smart. Nova handles e-commerce and courier delivery planning like no human ever could.',
+          description: 'Agile, precise, and street-smart. Burcu handles e-commerce and courier delivery planning like no human ever could.',
           features: [
             'Last-mile cost optimization',
             'Courier service & speed analysis',
@@ -153,9 +159,9 @@ export const messages: Record<SupportedLanguage, Messages> = {
           ]
         },
         arwen: {
-          name: 'Burcu',
+          name: 'Arwen',
           title: 'Ocean Freight Pricing Executive',
-          description: 'She knows the global trade lanes like the back of her hand. Burcu offers strategic, data-backed ocean freight quotes in seconds.',
+          description: 'She knows the global trade lanes like the back of her hand. Arwen offers strategic, data-backed ocean freight quotes in seconds.',
           features: [
             'FCL / LCL quotations',
             'Transit time & ETA predictions',
@@ -235,11 +241,11 @@ export const messages: Record<SupportedLanguage, Messages> = {
     },
     hero: {
       title: {
-        prefix: '10 Yıllık Lojistik Deneyimi,',
-        highlight: 'Şimdi Yapay Zeka ile',
+        prefix: "Dexpell'in",
+        highlight: 'Dijital İkizi',
       },
       subtitle:
-        'Binlerce gönderi deneyimi, milyonlarca teslimat noktası — hepsi tek bir akıllı platformda birleşti.',
+        'Bu site Dexpell şirketinin tamamen yapay zeka ile dönüştürülmüş dijital versiyonudur. Kurumsal hafızamız, süreçlerimiz ve uzmanlığımız güvenle işlenir; müşterilerimiz ekibimizin en iyi haliyle 7/24 konuşur, teklif alır ve çözüme ulaşır.',
       explainer:
         'geçmiş gönderi verilerini ve güncel piyasa bilgilerini analiz ederek size en uygun navlun fiyatlarını ve çözümleri sunar.',
       explainer2:
@@ -249,6 +255,12 @@ export const messages: Record<SupportedLanguage, Messages> = {
         prefix: 'Siz sadece talebi iletin —',
         suffix: 'Dexpell.ai gerisini halleder.',
       },
+      badges: [
+        'Gerçek ekip tonu & uzmanlığı',
+        'Politika ve onay akışlarına uyum',
+        'WhatsApp • Web • E-posta',
+        'Navlun & transit & toplam maliyet'
+      ],
     },
     features: {
       heading: {
@@ -316,7 +328,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
       placeholder: "Kargo maliyetlerini sorun (ör. '5kg Almanya')...",
       wait: 'Lütfen modelin yanıtını tamamlamasını bekleyin! ',
       welcome: {
-        title: 'Selam! Ben Nova 😊',
+        title: 'Selam! Ben Burcu 😊',
         subtitle: 'Dexpell\'de kurye taşımacılığı fiyatlandırmasını ben yapıyorum. Hemen sizin için en uygun fiyatı hesaplayayım mı?',
       },
       suggestions: {
@@ -348,9 +360,9 @@ export const messages: Record<SupportedLanguage, Messages> = {
       clickPrompt: 'Tanıtım videosunu izlemek için herhangi bir mevcut ekip üyesine tıklayın',
       agents: {
         nova: {
-          name: 'Nova',
+          name: 'Burcu',
           title: 'Kargo Fiyatlandırma Uzmanı',
-          description: 'Çevik, hassas ve sokak zekası olan. Nova, e-ticaret ve kurye teslimat planlamasını hiçbir insanın yapamayacağı şekilde yönetiyor.',
+          description: 'Çevik, hassas ve sokak zekası olan. Burcu, e-ticaret ve kurye teslimat planlamasını hiçbir insanın yapamayacağı şekilde yönetiyor.',
           features: [
             'Son kilometre maliyet optimizasyonu',
             'Kurye servisi ve hız analizi',
@@ -360,9 +372,9 @@ export const messages: Record<SupportedLanguage, Messages> = {
           ]
         },
         arwen: {
-          name: 'Burcu',
+          name: 'Arwen',
           title: 'Denizyolu Taşımacılığı Fiyatlandırma Sorumlusu',
-          description: 'Küresel ticaret rotalarını avucunun içi gibi biliyor. Burcu, saniyeler içinde stratejik, veri destekli deniz taşımacılığı teklifleri sunuyor.',
+          description: 'Küresel ticaret rotalarını avucunun içi gibi biliyor. Arwen, saniyeler içinde stratejik, veri destekli deniz taşımacılığı teklifleri sunuyor.',
           features: [
             'FCL / LCL teklifleri',
             'Transit süresi ve ETA tahminleri',
