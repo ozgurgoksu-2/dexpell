@@ -115,7 +115,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
       placeholder: "Ask about shipping costs (e.g. '5kg to Germany')...",
       wait: 'Please wait for the model to finish its response!',
       welcome: {
-        title: 'Hello! I\'m BurcuX 😊',
+        title: 'Hello! I\'m Burcu |X| 😊',
         subtitle: 'I handle courier transportation pricing at Dexpell. Shall I calculate the most suitable price for you right away?',
       },
       suggestions: {
@@ -146,10 +146,10 @@ export const messages: Record<SupportedLanguage, Messages> = {
       subtitle: 'Global logistics services are not delivered by humans, but our data-driven digital specialists. They provide instant quotes, speak multiple languages, and never miss the details.',
       clickPrompt: 'Click on any available team member to watch their introduction video',
       agents: {
-        nova: {
-          name: 'BurcuX',
+        burcu: {
+          name: 'Burcu |X|',
           title: 'Cargo Pricing Executive',
-          description: 'Agile, precise, and street-smart. BurcuX handles e-commerce and courier delivery planning like no human ever could.',
+          description: 'Agile, precise, and street-smart. Burcu |X| handles e-commerce and courier delivery planning like no human ever could.',
           features: [
             'Last-mile cost optimization',
             'Courier service & speed analysis',
@@ -158,52 +158,52 @@ export const messages: Record<SupportedLanguage, Messages> = {
             'Product-level shipping strategies'
           ]
         },
-        arwen: {
-          name: 'Arwen',
-          title: 'Ocean Freight Pricing Executive',
-          description: 'She knows the global trade lanes like the back of her hand. Arwen offers strategic, data-backed ocean freight quotes in seconds.',
-          features: [
-            'FCL / LCL quotations',
-            'Transit time & ETA predictions',
-            'Cut-off / CY-CY deadline alerts',
-            'Alternative port/route suggestions',
-            'Documentation & compliance guidance'
-          ]
-        },
-        elif: {
-          name: 'Elif',
-          title: 'Air Freight Pricing Executive',
-          description: "She doesn't just ship cargo — she delivers time. Elif calculates the fastest airfreight options with total precision.",
-          features: [
-            'Kg/volume-based pricing',
-            'Flight schedule analysis',
-            'Cut-off time notifications',
-            'EXW, pickup & handling cost integration',
-            'Airport-to-door delivery optimization'
-          ]
-        },
-        lucas: {
-          name: 'Lucas',
-          title: 'Road Freight Pricing Executive',
-          description: 'He thinks in kilometers and margins. Lucas delivers accurate trucking quotes, optimized routes, and delivery times instantly.',
-          features: [
-            'Route & weight-based freight estimation',
-            'Lead time predictions',
-            'Alternative date suggestions',
-            'Supplier margin control',
-            'Customs & transit route analysis'
-          ]
-        },
-        sofia: {
-          name: 'Selin',
+        selin: {
+          name: 'Selin |X|',
           title: 'Global Customs Consultant',
-          description: "When your goods are at the border, it's already too late. Selin predicts taxes, identifies HS codes, and flags regulatory issues — before you even ship.",
+          description: "When your goods are at the border, it's already too late. Selin |X| predicts taxes, identifies HS codes, and flags regulatory issues — before you even ship.",
           features: [
             'HS/HTS code prediction from product details',
             'Country-specific duty & import tax calculation',
             'Trade agreement compliance (FTA, ATR, GSP)',
             'Anti-dumping / Section 232 risk detection',
             'Usage-based classification logic'
+          ]
+        },
+        asli: {
+          name: 'Aslı |X|',
+          title: 'Air Freight Specialist',
+          description: "Speed is her language. Aslı |X| delivers urgent cargo solutions with the fastest air freight options and real-time tracking.",
+          features: [
+            'Express air cargo',
+            'Flight schedule analysis',
+            'Airport-to-door service',
+            'Priority handling',
+            'Time-critical solutions'
+          ]
+        },
+        erkut: {
+          name: 'Erkut |X|',
+          title: 'Road Freight Specialist',
+          description: 'Road warrior with data precision. Erkut |X| calculates optimal trucking routes and delivers competitive land transport quotes instantly.',
+          features: [
+            'Route optimization',
+            'Cross-border transport',
+            'Full/partial truck loads',
+            'Delivery time estimation',
+            'Cost-effective planning'
+          ]
+        },
+        june: {
+          name: 'June |X|',
+          title: 'Ocean Freight Specialist',
+          description: 'Master of the seas. June |X| navigates global trade routes with precision, delivering optimal ocean freight solutions for your cargo.',
+          features: [
+            'FCL / LCL quotations',
+            'Port-to-port optimization',
+            'Container load planning',
+            'Shipping line selection',
+            'Documentation expertise'
           ]
         }
       },
@@ -328,7 +328,7 @@ export const messages: Record<SupportedLanguage, Messages> = {
       placeholder: "Kargo maliyetlerini sorun (ör. '5kg Almanya')...",
       wait: 'Lütfen modelin yanıtını tamamlamasını bekleyin! ',
       welcome: {
-        title: 'Selam! Ben BurcuX 😊',
+        title: 'Selam! Ben Burcu |X| 😊',
         subtitle: 'Dexpell\'de kurye taşımacılığı fiyatlandırmasını ben yapıyorum. Hemen sizin için en uygun fiyatı hesaplayayım mı?',
       },
       suggestions: {
@@ -359,10 +359,10 @@ export const messages: Record<SupportedLanguage, Messages> = {
       subtitle: 'Küresel lojistik hizmetleri insanlar tarafından değil, veri odaklı dijital uzmanlarımız tarafından sunuluyor. Anında teklifler veriyorlar, birden fazla dil konuşuyorlar ve hiçbir detayı kaçırmıyorlar.',
       clickPrompt: 'Tanıtım videosunu izlemek için herhangi bir mevcut ekip üyesine tıklayın',
       agents: {
-        nova: {
-          name: 'BurcuX',
+        burcu: {
+          name: 'Burcu |X|',
           title: 'Kargo Fiyatlandırma Uzmanı',
-          description: 'Çevik, hassas ve sokak zekası olan. BurcuX, e-ticaret ve kurye teslimat planlamasını hiçbir insanın yapamayacağı şekilde yönetiyor.',
+          description: 'Çevik, hassas ve sokak zekası olan. Burcu |X|, e-ticaret ve kurye teslimat planlamasını hiçbir insanın yapamayacağı şekilde yönetiyor.',
           features: [
             'Son kilometre maliyet optimizasyonu',
             'Kurye servisi ve hız analizi',
@@ -371,52 +371,52 @@ export const messages: Record<SupportedLanguage, Messages> = {
             'Ürün bazlı nakliye stratejileri'
           ]
         },
-        arwen: {
-          name: 'Arwen',
-          title: 'Denizyolu Taşımacılığı Fiyatlandırma Sorumlusu',
-          description: 'Küresel ticaret rotalarını avucunun içi gibi biliyor. Arwen, saniyeler içinde stratejik, veri destekli deniz taşımacılığı teklifleri sunuyor.',
-          features: [
-            'FCL / LCL teklifleri',
-            'Transit süresi ve ETA tahminleri',
-            'Son teslim / CY-CY deadline uyarıları',
-            'Alternatif liman/rota önerileri',
-            'Dokümantasyon ve uyumluluk rehberliği'
-          ]
-        },
-        elif: {
-          name: 'Elif',
-          title: 'Havayolu Taşımacılığı Fiyatlandırma Sorumlusu',
-          description: 'Sadece kargo taşımıyor - zaman teslim ediyor. Elif, en hızlı hava taşımacılığı seçeneklerini tam bir hassasiyetle hesaplıyor.',
-          features: [
-            'Kg/hacim bazlı fiyatlandırma',
-            'Uçuş programı analizi',
-            'Son teslim zamanı bildirimleri',
-            'EXW, toplama ve handling maliyet entegrasyonu',
-            'Havaalanından kapıya teslimat optimizasyonu'
-          ]
-        },
-        lucas: {
-          name: 'Lucas',
-          title: 'Karayolu Taşımacılığı Fiyatlandırma Sorumlusu',
-          description: 'Kilometre ve marj olarak düşünüyor. Lucas, doğru kamyon tekliflerini, optimize edilmiş rotaları ve teslimat sürelerini anında sunuyor.',
-          features: [
-            'Rota ve ağırlık bazlı nakliye tahmini',
-            'Teslim süresi tahminleri',
-            'Alternatif tarih önerileri',
-            'Tedarikçi marj kontrolü',
-            'Gümrük ve transit rota analizi'
-          ]
-        },
-        sofia: {
-          name: 'Selin',
+        selin: {
+          name: 'Selin |X|',
           title: 'Uluslararası Gümrük Danışmanı',
-          description: 'Mallarınız sınırda olduğunda, artık çok geç. Selin vergileri tahmin ediyor, HS kodlarını belirliyor ve düzenleyici sorunları işaretliyor - siz daha göndermeden önce.',
+          description: 'Mallarınız sınırda olduğunda, artık çok geç. Selin |X| vergileri tahmin ediyor, HS kodlarını belirliyor ve düzenleyici sorunları işaretliyor - siz daha göndermeden önce.',
           features: [
             'Ürün detaylarından HS/HTS kod tahmini',
             'Ülkeye özel gümrük vergisi ve ithalat vergisi hesaplaması',
             'Ticaret anlaşması uyumluluğu (FTA, ATR, GSP)',
             'Anti-damping / Bölüm 232 risk tespiti',
             'Kullanım bazlı sınıflandırma mantığı'
+          ]
+        },
+        asli: {
+          name: 'Aslı |X|',
+          title: 'Havayolu Taşımacılığı Uzmanı',
+          description: "Hız onun dili. Aslı |X|, en hızlı hava kargo seçenekleri ve gerçek zamanlı takip ile acil kargo çözümleri sunuyor.",
+          features: [
+            'Ekspres hava kargo',
+            'Uçuş programı analizi',
+            'Havaalanından kapıya servis',
+            'Öncelikli elleçleme',
+            'Zaman kritik çözümler'
+          ]
+        },
+        erkut: {
+          name: 'Erkut |X|',
+          title: 'Karayolu Taşımacılığı Uzmanı',
+          description: 'Veri hassasiyetiyle donanmış yol savaşçısı. Erkut |X|, optimal kamyon rotalarını hesaplıyor ve rekabetçi kara taşımacılığı teklifleri anında sunuyor.',
+          features: [
+            'Rota optimizasyonu',
+            'Sınır ötesi taşımacılık',
+            'Tam/parsiyel kamyon yükleri',
+            'Teslimat süresi tahmini',
+            'Maliyet etkin planlama'
+          ]
+        },
+        june: {
+          name: 'June |X|',
+          title: 'Denizyolu Taşımacılığı Uzmanı',
+          description: 'Denizlerin ustası. June |X|, küresel ticaret rotalarında hassasiyetle geziniyor ve kargonuz için en uygun deniz taşımacılığı çözümlerini sunuyor.',
+          features: [
+            'FCL / LCL teklifleri',
+            'Liman-liman optimizasyonu',
+            'Konteyner yük planlaması',
+            'Nakliye hattı seçimi',
+            'Dokümantasyon uzmanlığı'
           ]
         }
       },

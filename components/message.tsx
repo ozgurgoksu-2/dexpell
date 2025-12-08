@@ -27,11 +27,11 @@ const Message: React.FC<MessageProps> = ({ message }) => {
       ) : (
         <div className="flex flex-col">
           <div className="flex items-start gap-3">
-            {/* BurcuX Profile Photo */}
+            {/* Burcu |X| Profile Photo */}
             <div className="flex-shrink-0">
               <Image
                 src="/videos/nova-pp.png"
-                alt="BurcuX Assistant"
+                alt="Burcu |X| Assistant"
                 width={32}
                 height={32}
                 className="rounded-full"

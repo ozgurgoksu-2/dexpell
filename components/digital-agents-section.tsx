@@ -38,44 +38,44 @@ interface DigitalAgentsSectionProps {
 
 const agents: Agent[] = [
   {
-    key: 'nova',
+    key: 'burcu',
     icon: Package,
     iconColor: 'text-orange-600 dark:text-orange-400',
     bgGradient: 'from-orange-500/10 to-amber-500/10',
     available: true,
-    videoUrl: '/videos/nova-cargo.mp4'
+    videoUrl: '/videos/Burcu X.mp4'
   },
   {
-    key: 'arwen',
-    icon: Anchor,
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    bgGradient: 'from-blue-500/10 to-cyan-500/10',
-    available: false, // Not clickable
-    videoUrl: '/videos/arwen-intro.mp4' // Placeholder for future video
-  },
-  {
-    key: 'elif',
+    key: 'asli',
     icon: Plane,
     iconColor: 'text-purple-600 dark:text-purple-400',
     bgGradient: 'from-purple-500/10 to-pink-500/10',
-    available: false, // Not clickable
-    videoUrl: '/videos/elif-intro.mp4' // Placeholder for future video
+    available: true,
+    videoUrl: '/videos/Aslı X (3).mp4'
   },
   {
-    key: 'lucas',
+    key: 'erkut',
     icon: Truck,
     iconColor: 'text-green-600 dark:text-green-400',
     bgGradient: 'from-green-500/10 to-emerald-500/10',
-    available: false, // Not clickable
-    videoUrl: '/videos/lucas-intro.mp4' // Placeholder for future video
+    available: true,
+    videoUrl: '/videos/Erkut X.mp4'
   },
   {
-    key: 'sofia',
+    key: 'june',
+    icon: Anchor,
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    bgGradient: 'from-blue-500/10 to-cyan-500/10',
+    available: true,
+    videoUrl: '/videos/June X.mp4'
+  },
+  {
+    key: 'selin',
     icon: Globe,
     iconColor: 'text-red-600 dark:text-red-400',
     bgGradient: 'from-red-500/10 to-rose-500/10',
     available: true,
-    videoUrl: '/videos/sofia-intro.mp4'
+    videoUrl: '/videos/Selin (1).mp4'
   }
 ];
 
@@ -85,9 +85,22 @@ export function DigitalAgentsSection({ language }: DigitalAgentsSectionProps) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
-  // Layout: BurcuX on top (first agent), then 4 agents in bottom row
-  const topAgent = agents[0]; // BurcuX (Nova key)
-  const bottomRowAgents = agents.slice(1, 5); // All other 4 agents
+  // Profile picture mapping
+  const getProfilePic = (agentKey: string) => {
+    const mapping: Record<string, string> = {
+      'burcu': 'nova-pp.png',
+      'asli': 'aslıpp.png',
+      'erkut': 'erkutpp.png',
+      'june': 'junepp.png',
+      'selin': 'sofia-pp.png'
+    };
+    return `/images/${mapping[agentKey] || 'nova-pp.png'}`;
+  };
+
+  // Layout: 1-3-1 design
+  const topAgent = agents[0]; // First agent (Burcu)
+  const middleRowAgents = agents.slice(1, 4); // Middle 3 agents (Aslı, Erkut, June)
+  const bottomAgent = agents[4]; // Last agent (Selin)
 
   const handleAgentClick = (agent: Agent) => {
     if (agent.available) {
@@ -142,15 +155,11 @@ export function DigitalAgentsSection({ language }: DigitalAgentsSectionProps) {
             {/* Agent icon and info */}
             <div className="mb-4 text-center sm:mb-6">
               <div className={`mx-auto mb-3 flex size-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform group-hover:scale-110 dark:bg-gray-900 sm:mb-4 sm:size-20 overflow-hidden`}>
-                {agent.key === 'nova' || agent.key === 'sofia' ? (
-                  <img 
-                    src={`/videos/${agent.key}-pp.png`}
-                    alt={`${name} profile`}
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <Icon className={`size-8 sm:size-10 ${agent.iconColor}`} />
-                )}
+                <img 
+                  src={getProfilePic(agent.key)}
+                  alt={`${name} profile`}
+                  className="w-full h-full object-cover rounded-full"
+                />
               </div>
               <h3 className="mb-1 text-lg font-bold sm:text-xl">{name}</h3>
               <p className="text-xs font-medium text-muted-foreground sm:text-sm">{title}</p>
@@ -216,14 +225,19 @@ export function DigitalAgentsSection({ language }: DigitalAgentsSectionProps) {
           </p>
         </motion.div>
 
-        {/* Top row - BurcuX (centered) */}
+        {/* Top row - 1 agent (Burcu) centered */}
         <div className="mb-8 flex justify-center">
           {renderAgentCard(topAgent, 0)}
         </div>
 
-        {/* Bottom row - 4 agents */}
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {bottomRowAgents.map((agent, index) => renderAgentCard(agent, index + 1))}
+        {/* Middle row - 3 agents */}
+        <div className="mb-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {middleRowAgents.map((agent, index) => renderAgentCard(agent, index + 1))}
+        </div>
+
+        {/* Bottom row - 1 agent (Selin) centered */}
+        <div className="flex justify-center">
+          {renderAgentCard(bottomAgent, 4)}
         </div>
       </div>
 
@@ -250,15 +264,11 @@ export function DigitalAgentsSection({ language }: DigitalAgentsSectionProps) {
                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                     <div className={`flex size-10 sm:size-12 items-center justify-center rounded-full bg-white shadow-lg dark:bg-gray-900 shrink-0 overflow-hidden`}>
-                      {selectedAgent.key === 'nova' || selectedAgent.key === 'sofia' ? (
-                        <img 
-                          src={`/videos/${selectedAgent.key}-pp.png`}
-                          alt={`${translate(language, `digitalTeam.agents.${selectedAgent.key}.name`)} profile`}
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      ) : (
-                        <selectedAgent.icon className={`size-5 sm:size-6 ${selectedAgent.iconColor}`} />
-                      )}
+                      <img 
+                        src={getProfilePic(selectedAgent.key)}
+                        alt={`${translate(language, `digitalTeam.agents.${selectedAgent.key}.name`)} profile`}
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-lg sm:text-xl font-bold truncate">{translate(language, `digitalTeam.agents.${selectedAgent.key}.name`)}</h3>
@@ -277,33 +287,15 @@ export function DigitalAgentsSection({ language }: DigitalAgentsSectionProps) {
 
                 {/* Video Content */}
                 <div className="aspect-video bg-muted/20 flex items-center justify-center p-4 sm:p-8">
-                  {selectedAgent.key === 'nova' || selectedAgent.key === 'sofia' ? (
-                    <video 
-                      controls 
-                      className="w-full h-full rounded-lg"
-                      autoPlay
-                      muted
-                    >
-                      <source src={selectedAgent.videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    /* Placeholder for other agents */
-                    <div className="text-center space-y-3 sm:space-y-4 max-w-md mx-auto">
-                      <div className="mx-auto size-16 sm:size-20 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Play className="size-6 sm:size-8 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="text-base sm:text-lg font-semibold mb-2">{translate(language, 'digitalTeam.modal.videoComingSoon')}</h4>
-                        <p className="text-xs sm:text-sm text-muted-foreground px-2">
-                          {translate(language, `digitalTeam.agents.${selectedAgent.key}.name`)}{translate(language, 'digitalTeam.modal.videoDescription')}
-                        </p>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {translate(language, 'digitalTeam.modal.videoUrl')} {selectedAgent.videoUrl}
-                      </div>
-                    </div>
-                  )}
+                  <video 
+                    controls 
+                    className="w-full h-full rounded-lg"
+                    autoPlay
+                    muted
+                  >
+                    <source src={selectedAgent.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
 
                 {/* Modal Footer */}

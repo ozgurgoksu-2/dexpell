@@ -10,7 +10,6 @@ import {
   ShieldCheckIcon,
   ChartLineIcon,
   MessageSquareIcon,
-  XIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DigitalAgentsSection } from './digital-agents-section';
@@ -66,7 +65,6 @@ const staggerChildren = {
 };
 
 export function LandingPage() {
-  const [showPopup, setShowPopup] = useState(false);
   const [language, setLanguage] = useState<SupportedLanguage>('en');
 
   useEffect(() => {
@@ -82,13 +80,6 @@ export function LandingPage() {
       const isTurkish = browserLang.includes('tr');
       setLanguage(isTurkish ? 'tr' : 'en');
     }
-
-    // Show popup after 2 seconds when page loads
-    const timer = setTimeout(() => {
-      setShowPopup(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const scrollToAgents = () => {
@@ -100,74 +91,6 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
-      {/* Popup Modal */}
-      <AnimatePresence>
-        {showPopup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowPopup(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className="relative mx-4 max-w-md rounded-2xl bg-background p-6 sm:p-8 shadow-2xl border-2 border-primary/20 ring-1 ring-primary/10"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowPopup(false)}
-                className="absolute right-4 top-4 rounded-full p-2 transition-colors hover:bg-muted"
-                aria-label="Close popup"
-                type="button"
-              >
-                <XIcon className="size-5 text-muted-foreground hover:text-foreground" />
-              </button>
-
-              <div className="text-center">
-                <div className="mb-4 flex justify-center">
-                  <div className="rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 p-4 ring-2 ring-primary/20">
-                    <div 
-                      className="w-12 h-12 rounded-lg bg-cover bg-center"
-                      style={{
-                        backgroundImage: 'url(/images/dexpell-logo.jpg)'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <h2 className="mb-3 text-xl sm:text-2xl font-bold text-foreground">
-                  {translate(language, 'popup.title')}
-                </h2>
-
-                <p className="mb-6 text-sm sm:text-base text-muted-foreground">
-                  {translate(language, 'popup.subtitle')}
-                </p>
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Link href="/chat" className="flex-1">
-                    <Button
-                      type="button"
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                      size="lg"
-                    >
-                      {translate(language, 'popup.cta.try')}
-                    </Button>
-                  </Link>
-                </div>
-
-                <p className="mt-4 text-xs text-muted-foreground">
-                  {translate(language, 'popup.footnote')}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Navigation */}
       <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 safe-area-inset-top">
         <div className="container mx-auto px-4 sm:px-6">
@@ -549,7 +472,7 @@ export function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-primary">
+                  <Link href="https://dexpell.com" className="hover:text-primary">
                     {translate(language, 'nav.contact')}
                   </Link>
                 </li>
